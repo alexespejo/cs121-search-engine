@@ -18,8 +18,20 @@ class Indexer:
         self.next_doc_id = 0 # doc_ids will be assigned sequentially
         self.total_docs = 0
         
-    def process_document(self, url: str, content: str) -> int:
-        if url not in self.url_to_doc_id:
+    def process_document(self, url: str, content: str, assign_new_doc_id: bool = False) -> int:
+        """
+        Process a document and add it to the index.
+        
+        Args:
+            url: The document URL
+            content: The document content (HTML)
+            assign_new_doc_id: If True, always assign a new doc_id regardless of URL.
+                              If False, reuse doc_id for duplicate URLs.
+        
+        Returns:
+            The doc_id assigned to this document
+        """
+        if assign_new_doc_id or url not in self.url_to_doc_id:
             doc_id = self.next_doc_id
             self.next_doc_id += 1
             self.url_to_doc_id[url] = doc_id # map url to doc_id
@@ -47,7 +59,17 @@ class Indexer:
         
         return doc_id
     
-    def process_json_file(self, file_path: Path) -> Optional[int]:
+    def process_json_file(self, file_path: Path, assign_new_doc_id: bool = False) -> Optional[int]:
+        """
+        Process a single JSON file.
+        
+        Args:
+            file_path: Path to the JSON file
+            assign_new_doc_id: If True, always assign a new doc_id (for batch processing)
+        
+        Returns:
+            The doc_id assigned, or None if processing failed
+        """
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
@@ -62,7 +84,7 @@ class Indexer:
                 print(f"Warning: Missing url or content in {file_path}")
                 return None
             
-            doc_id = self.process_document(url, content)
+            doc_id = self.process_document(url, content, assign_new_doc_id=assign_new_doc_id)
             self.total_docs += 1
             return doc_id
             
@@ -87,6 +109,105 @@ class Indexer:
             self.process_json_file(json_file)
         
         print(f"Processed {self.total_docs} documents")
+    
+    def process_folder_batch(self, folder_path: Path) -> int:
+        """
+        Process a single folder (batch) containing JSON files.
+        Files are processed in sorted order to ensure consistent doc_id assignment.
+        
+        Args:
+            folder_path: Path to the folder containing JSON files
+        
+        Returns:
+            Number of documents processed in this batch
+        """
+        if not folder_path.exists() or not folder_path.is_dir():
+            raise ValueError(f"Folder does not exist or is not a directory: {folder_path}")
+        
+        # Get all JSON files in the folder and sort them for consistent ordering
+        json_files = sorted(folder_path.glob('*.json'))
+        
+        if not json_files:
+            print(f"No JSON files found in {folder_path}")
+            return 0
+        
+        print(f"Processing batch: {folder_path.name} ({len(json_files)} files)")
+        
+        docs_before = self.total_docs
+        doc_id_before = self.next_doc_id
+        
+        for i, json_file in enumerate(json_files, 1):
+            # Print folder and file being processed
+            print(f"  [{i}/{len(json_files)}] Folder: {folder_path.name} | File: {json_file.name}")
+            # Assign new doc_id for each file (sequential by order)
+            self.process_json_file(json_file, assign_new_doc_id=True)
+        
+        docs_processed = self.total_docs - docs_before
+        print(f"  Batch complete: {docs_processed} documents processed (doc_ids {doc_id_before} to {self.next_doc_id - 1})")
+        
+        return docs_processed
+    
+    def process_batches(self, parent_directory: str, index_dir: str) -> None:
+        """
+        Process multiple folders as batches. Each folder is a batch.
+        After each batch, the index is saved to disk.
+        doc_ids continue sequentially across batches.
+        
+        Args:
+            parent_directory: Path to the parent directory containing folder batches
+            index_dir: Directory where the index is saved after each batch
+        """
+        parent_path = Path(parent_directory)
+        if not parent_path.exists():
+            raise ValueError(f"Parent directory does not exist: {parent_directory}")
+        
+        # Get all subdirectories (folders that represent batches)
+        folders = [f for f in parent_path.iterdir() if f.is_dir()]
+        folders.sort()  # Process folders in sorted order
+        
+        if not folders:
+            print(f"No folders found in {parent_directory}")
+            return
+        
+        print(f"Found {len(folders)} batches to process")
+        
+        # Try to load existing index if it exists
+        index_path = Path(index_dir)
+        if (index_path / 'inverted_index.pkl').exists():
+            print(f"Loading existing index from {index_dir}...")
+            self.load_index(index_dir)
+            print(f"Resuming from doc_id {self.next_doc_id}")
+        else:
+            print("No existing index found. Starting fresh.")
+        
+        # Process each folder as a batch
+        for batch_num, folder in enumerate(folders, 1):
+            print(f"\n{'='*70}")
+            print(f"Processing Batch {batch_num}/{len(folders)}: {folder.name}")
+            print(f"{'='*70}")
+            
+            try:
+                docs_processed = self.process_folder_batch(folder)
+                
+                # Save index after each batch
+                print(f"\nSaving index after batch {batch_num}...")
+                self.save_index(index_dir)
+                
+                # Print batch summary
+                analytics = self.get_analytics()
+                print(f"Batch {batch_num} summary:")
+                print(f"  Documents in batch: {docs_processed}")
+                print(f"  Total documents: {analytics['num_documents']}")
+                print(f"  Total unique tokens: {analytics['num_unique_tokens']}")
+                
+            except Exception as e:
+                print(f"Error processing batch {folder.name}: {e}")
+                print(f"Index saved up to batch {batch_num - 1}")
+                raise
+        
+        print(f"\n{'='*70}")
+        print("All batches processed successfully!")
+        print(f"{'='*70}")
     
     def get_analytics(self) -> Dict[str, any]:
         unique_tokens = len(self.index.index)
@@ -121,7 +242,7 @@ class Indexer:
         print(f"Index saved to {index_dir}")
     
     def load_index(self, index_dir: str) -> None:
-        # I've seen ppl use pkl. I got bored 
+        """Load index from disk and resume doc_id assignment."""
         index_path = Path(index_dir)
         
         index_file = index_path / 'inverted_index.pkl'
@@ -137,10 +258,17 @@ class Indexer:
         with open(url_map_file, 'rb') as f:
             self.url_to_doc_id = pickle.load(f)
         
-        self.next_doc_id = len(self.doc_id_map)
+        # Calculate next_doc_id: max doc_id + 1, or 0 if empty
+        if self.doc_id_map:
+            self.next_doc_id = max(self.doc_id_map.keys()) + 1
+        else:
+            self.next_doc_id = 0
+        
         self.total_docs = len(self.doc_id_map)
         
         print(f"Index loaded from {index_dir}")
+        print(f"  Documents: {self.total_docs}")
+        print(f"  Next doc_id: {self.next_doc_id}")
     
     def get_index_size_kb(self, index_dir: str) -> float:
         """Calculate the total size of the index on disk in KB."""
