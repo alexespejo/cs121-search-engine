@@ -25,6 +25,16 @@ def main():
     test_data_dir = "test-data/DEV"
     index_dir = "index"
     
+    # TODO: If you want to update the index after aggregating rethink this logic since it removes all .pkl files
+    index_path = Path(index_dir)
+    if index_path.exists() and index_path.is_dir():
+        for pkl_file in index_path.glob("*.pkl"):
+            try:
+                pkl_file.unlink()
+                print(f"Removed: {pkl_file}")
+            except Exception as e:
+                print(f"Could not remove {pkl_file}: {e}")
+
     indexer = Indexer()
     
     # Process all batches
@@ -32,6 +42,7 @@ def main():
         print(f"Processing batches from {test_data_dir}")
         indexer.process_batches(test_data_dir, index_dir)
     else:
+        # sample run
         print(f"Warning: {test_data_dir} does not exist. Processing sample data instead.")
         # Fallback to sample data processing
         json_files = [
@@ -63,13 +74,8 @@ def main():
     print(f"  Total postings: {analytics['total_postings']}")
     print(f"  Average postings per token: {analytics['avg_postings_per_token']:.2f}")
     
-    # Generate and save report
     print(f"\nGenerating index report...")
     indexer.generate_report(index_dir, 'index_report.txt')
-    
-    # Optionally display inverted index (comment out for large indexes)
-    # display_inverted_index(indexer)
-
 
 if __name__ == '__main__':
     main()

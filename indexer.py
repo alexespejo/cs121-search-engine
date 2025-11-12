@@ -101,11 +101,11 @@ class Indexer:
             raise ValueError(f"Directory does not exist: {directory_path}")
         
         json_files = list(directory.rglob('*.json'))
-        print(f"Found {len(json_files)} JSON files in {directory_path}")
+        # print(f"Found {len(json_files)} JSON files in {directory_path}")
         
         for i, json_file in enumerate(json_files, 1):
-            if i % 100 == 0:
-                print(f"Processing file {i}/{len(json_files)}...")
+            # if i % 100 == 0:
+            #     print(f"Processing file {i}/{len(json_files)}...")
             self.process_json_file(json_file)
         
         print(f"Processed {self.total_docs} documents")
@@ -125,20 +125,20 @@ class Indexer:
             raise ValueError(f"Folder does not exist or is not a directory: {folder_path}")
         
         # Get all JSON files in the folder and sort them for consistent ordering
-        json_files = sorted(folder_path.glob('*.json'))
+        json_files = folder_path.glob('*.json')
         
         if not json_files:
             print(f"No JSON files found in {folder_path}")
             return 0
         
-        print(f"Processing batch: {folder_path.name} ({len(json_files)} files)")
+        print(f"Processing batch: {folder_path.name}")
         
         docs_before = self.total_docs
         doc_id_before = self.next_doc_id
         
         for i, json_file in enumerate(json_files, 1):
             # Print folder and file being processed
-            print(f"  [{i}/{len(json_files)}] Folder: {folder_path.name} | File: {json_file.name}")
+            # print(f"  [{i}/{len(json_files)}] Folder: {folder_path.name} | File: {json_file.name}")
             # Assign new doc_id for each file (sequential by order)
             self.process_json_file(json_file, assign_new_doc_id=True)
         
@@ -162,14 +162,18 @@ class Indexer:
             raise ValueError(f"Parent directory does not exist: {parent_directory}")
         
         # Get all subdirectories (folders that represent batches)
+        # Process folders in the order they appear in the directory
+        # Note: iterdir() order is filesystem-dependent and not guaranteed
         folders = [f for f in parent_path.iterdir() if f.is_dir()]
-        folders.sort()  # Process folders in sorted order
         
         if not folders:
             print(f"No folders found in {parent_directory}")
             return
         
         print(f"Found {len(folders)} batches to process")
+        print(f"Processing order:")
+        for i, folder in enumerate(folders, 1):
+            print(f"  {i}. {folder.name}")
         
         # Try to load existing index if it exists
         index_path = Path(index_dir)
@@ -192,6 +196,11 @@ class Indexer:
                 # Save index after each batch
                 print(f"\nSaving index after batch {batch_num}...")
                 self.save_index(index_dir)
+                
+                # Print inverted index to file after each batch
+                inverted_index_dir = "inverted-indexes"
+                print(f"Printing inverted index for batch {batch_num}...")
+                self.print_inverted_index_to_file(inverted_index_dir, folder.name)
                 
                 # Print batch summary
                 analytics = self.get_analytics()
@@ -286,6 +295,55 @@ class Indexer:
         # Convert bytes to KB
         total_size_kb = total_size_bytes / 1024.0
         return total_size_kb
+    
+    def print_inverted_index_to_file(self, output_dir: str, batch_name: str) -> None:
+        """
+        Print the inverted index to a text file.
+        
+        Args:
+            output_dir: Directory where the inverted index file will be saved
+            batch_name: Name of the batch (used for the filename)
+        """
+        output_path = Path(output_dir)
+        output_path.mkdir(parents=True, exist_ok=True)
+        
+        # Create filename from batch name (sanitize for filesystem)
+        safe_batch_name = batch_name.replace('/', '_').replace('\\', '_')
+        filename = f"inverted_index_{safe_batch_name}.txt"
+        file_path = output_path / filename
+        
+        # Get the inverted index
+        index = self.index.index
+        sorted_terms = sorted(index.keys())
+        
+        # Build the content
+        lines = [
+            "=" * 70,
+            f"INVERTED INDEX - BATCH: {batch_name}",
+            "=" * 70,
+            f"Total documents: {len(self.doc_id_map)}",
+            f"Total unique tokens: {len(sorted_terms)}",
+            "=" * 70,
+            "",
+        ]
+        
+        # Add each term and its postings
+        for term in sorted_terms:
+            postings = index[term]
+            sorted_postings = sorted(postings, key=lambda x: x[0])
+            lines.append(f"'{term}' -> {sorted_postings}")
+        
+        lines.append("")
+        lines.append("=" * 70)
+        lines.append(f"End of inverted index for batch: {batch_name}")
+        lines.append("=" * 70)
+        
+        # Write to file
+        content = "\n".join(lines)
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write(content)
+        
+        print(f"  Inverted index saved to: {file_path}")
     
     def generate_report(self, index_dir: str, output_file: str = 'index_report.txt') -> None:
         """Generate a report with analytics about the index and save it to a .txt file."""
