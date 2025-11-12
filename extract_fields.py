@@ -2,9 +2,10 @@ from bs4 import BeautifulSoup
 from typing import Dict
 
 def extract_fields(content: str) -> Dict[str, str]:
+    # idea is to extract what's most relevant to the user
+    # TODO: this is a simple approach off the dome
     soup = BeautifulSoup(content, 'html.parser')
     
-    # Remove noise
     for element in soup(['script', 'style', 'nav', 'footer']):
         element.decompose()
     
