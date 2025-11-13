@@ -3,3 +3,6 @@
 /inverted-indexes
 /test-data
 /index
+__pycache__
+DEV
+developer.zip
