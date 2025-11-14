@@ -10,3 +10,6 @@ developer.zip
 /__pycache__
 /.ipynb_checkpoints
 index/*
+pkl_json.py
+find_file.py
+/utils/__pycache__

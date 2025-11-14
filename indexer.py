@@ -17,14 +17,12 @@ class Indexer:
         self.index = InvertedIndex()
         self.doc_id_map: Dict[int, str] = {} # doc_id to url
         self.url_to_doc_id: Dict[str, int] = {} # url to doc_id
-        self.next_doc_id = 0 # doc_ids will be assigned sequentially
+        self.next_doc_id = 0 
         self.total_docs = 0
-        self.skipped_urls = 0  # Track skipped URLs
+        self.skipped_urls = 0 
         
-        # Initialize mimetypes (ensures all common types are loaded)
         mimetypes.init()
         
-        # Define file extensions to skip (non-HTML content)
         self.skip_extensions = {
             '.txt', '.pdf', '.doc', '.docx', '.xls', '.xlsx', 
             '.ppt', '.pptx', '.zip', '.rar', '.tar', '.gz',
@@ -34,7 +32,6 @@ class Indexer:
             '.css', '.js', '.json', '.xml', '.csv'
         }
         
-        # Define MIME types to skip (non-HTML content types)
         self.skip_mime_types = {
             'text/plain', 'text/css', 'text/javascript', 'application/javascript',
             'application/json', 'application/xml', 'text/xml', 'text/csv',
@@ -55,19 +52,15 @@ class Indexer:
             Tuple of (should_skip: bool, reason: str)
         """
         try:
-            # Parse the URL
             parsed = urlparse(url)
             path = parsed.path.lower()
             
-            # Check if the path has a file extension we should skip
             for ext in self.skip_extensions:
                 if path.endswith(ext):
                     return True, f"File extension {ext}"
-                # Also check for extension in query parameters (e.g., ?file=something.txt)
                 if ext in path:
                     return True, f"File extension {ext} in path"
             
-            # Check if URL has query parameters that suggest non-HTML content
             query = parsed.query.lower()
             if any(ext in query for ext in self.skip_extensions):
                 for ext in self.skip_extensions:
@@ -82,7 +75,6 @@ class Indexer:
             return False, ""
             
         except Exception as e:
-            # If there's an error parsing the URL, skip it to be safe
             return True, f"URL parsing error: {e}"
         
     def process_document(self, url: str, content: str, assign_new_doc_id: bool = False) -> int:
@@ -106,13 +98,12 @@ class Indexer:
         else:
             doc_id = self.url_to_doc_id[url]
         
-        # extract the fields from the content
         try:
             fields = extract_fields(content)
         except Exception as e:
             print(f"Warning: Failed to extract fields from {url}: {e}")
             return doc_id
-        
+
         # tokenize the fields
         try:
             term_frequencies = tokenize(fields)
@@ -151,13 +142,14 @@ class Indexer:
                 print(f"Warning: Missing url or content in {file_path}")
                 return None
             
-            # Check if URL should be skipped (e.g., .txt files, PDFs, images, etc.)
-            should_skip, reason = self.should_skip_url(url)
-            if should_skip:
-                self.skipped_urls += 1
-                print(f"Skipping URL (reason: {reason}): {url}")
-                return None
-            
+            # TODO: Uncomment this when we want to skip URLs
+            # should_skip, reason = self.should_skip_url(url)
+            # if should_skip:
+            #     self.skipped_urls += 1
+                # print(f"Skipping URL (reason: {reason}): {url}")
+                # print(f"Skipping file: {file_path}")
+                # return None
+
             doc_id = self.process_document(url, content, assign_new_doc_id=assign_new_doc_id)
             self.total_docs += 1
             return doc_id
