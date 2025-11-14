@@ -4,8 +4,9 @@ INDEX ANALYTICS REPORT
 
 Metric                                    | Value
 ----------------------------------------------------------------------
-Number of indexed documents              | 1993
-Number of unique tokens                  | 248697
-Total size of index on disk (KB)         | 8924.28
+Number of indexed documents              | 33702
+Number of unique tokens                  | 504393
+Total size of index on disk (KB)         | 45815.60
+Number of skipped URLs                   | 0
 
 ======================================================================

@@ -73,7 +73,7 @@ def main():
     print(f"  Unique tokens: {analytics['num_unique_tokens']}")
     print(f"  Total postings: {analytics['total_postings']}")
     print(f"  Average postings per token: {analytics['avg_postings_per_token']:.2f}")
-    print(f"  Skipped URLs: {analytics['skipped_urls']}")
+    # print(f"  Skipped URLs: {analytics['skipped_urls']}")
     
     print(f"\nGenerating index report...")
     indexer.generate_report(index_dir, 'index_report.txt')

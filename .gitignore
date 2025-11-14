@@ -5,3 +5,6 @@
 /index
 /__pycache__
 /.ipynb_checkpoints
+pkl_json.py
+find_file.py
+/utils/__pycache__
