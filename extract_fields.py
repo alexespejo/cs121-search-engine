@@ -12,6 +12,7 @@ def extract_fields(content: str) -> Dict[str, str]:
     title_tag = soup.find('title')
     main_tag = soup.find('main')
     meta_tag_desc = soup.find('meta', {'name': 'description'})
+    body_tag = soup.find('body')
 
     fields = {
         'title': title_tag.get_text() if title_tag else '',
@@ -19,9 +20,9 @@ def extract_fields(content: str) -> Dict[str, str]:
         'h2': [h.get_text() for h in soup.find_all('h2')],
         'h3': [h.get_text() for h in soup.find_all('h3')],
         'meta_desc': meta_tag_desc.get('content', '') if meta_tag_desc else '',
-        'body': main_tag.get_text() if main_tag else soup.get_text(),
+        'body': main_tag.get_text() if main_tag else (body_tag.get_text() if body_tag else soup.get_text()),
         'links': [(a.get_text(), a['href']) for a in soup.find_all('a', href=True)],
-        'alt_text': [img['alt'] for img in soup.find_all('img', alt=True)]
+        'alt_text': [img.get('alt', '') for img in soup.find_all('img') if img.has_attr('alt')],
     }
     
     return fields
