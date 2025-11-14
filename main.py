@@ -22,7 +22,7 @@ def display_inverted_index(indexer: Indexer):
 def main():
     # Process test-data/DEV with batch processing
     # Each folder in test-data/DEV is a batch
-    test_data_dir = "test-data/DEV"
+    test_data_dir = "test-data/DEV" # change for route
     index_dir = "index"
     
     # TODO: If you want to update the index after aggregating rethink this logic since it removes all .pkl files
@@ -73,6 +73,7 @@ def main():
     print(f"  Unique tokens: {analytics['num_unique_tokens']}")
     print(f"  Total postings: {analytics['total_postings']}")
     print(f"  Average postings per token: {analytics['avg_postings_per_token']:.2f}")
+    print(f"  Skipped URLs: {analytics['skipped_urls']}")
     
     print(f"\nGenerating index report...")
     indexer.generate_report(index_dir, 'index_report.txt')

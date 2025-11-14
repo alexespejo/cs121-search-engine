@@ -3,6 +3,8 @@ from pathlib import Path
 from typing import Dict, List, Tuple, Optional
 from collections import defaultdict
 import pickle
+from urllib.parse import urlparse
+import mimetypes
 
 from extract_fields import extract_fields
 from tokenize import tokenize
@@ -17,6 +19,71 @@ class Indexer:
         self.url_to_doc_id: Dict[str, int] = {} # url to doc_id
         self.next_doc_id = 0 # doc_ids will be assigned sequentially
         self.total_docs = 0
+        self.skipped_urls = 0  # Track skipped URLs
+        
+        # Initialize mimetypes (ensures all common types are loaded)
+        mimetypes.init()
+        
+        # Define file extensions to skip (non-HTML content)
+        self.skip_extensions = {
+            '.txt', '.pdf', '.doc', '.docx', '.xls', '.xlsx', 
+            '.ppt', '.pptx', '.zip', '.rar', '.tar', '.gz',
+            '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.svg', '.ico',
+            '.mp3', '.mp4', '.avi', '.mov', '.wav', '.flv',
+            '.exe', '.dll', '.bin', '.dmg', '.iso',
+            '.css', '.js', '.json', '.xml', '.csv'
+        }
+        
+        # Define MIME types to skip (non-HTML content types)
+        self.skip_mime_types = {
+            'text/plain', 'text/css', 'text/javascript', 'application/javascript',
+            'application/json', 'application/xml', 'text/xml', 'text/csv',
+            'application/pdf', 'application/zip', 'application/x-rar-compressed',
+            'image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/svg+xml',
+            'video/mp4', 'video/mpeg', 'audio/mpeg', 'audio/wav',
+            'application/octet-stream'
+        }
+    
+    def should_skip_url(self, url: str) -> Tuple[bool, str]:
+        """
+        Check if a URL should be skipped based on file extension or content type.
+        
+        Args:
+            url: The URL to check
+            
+        Returns:
+            Tuple of (should_skip: bool, reason: str)
+        """
+        try:
+            # Parse the URL
+            parsed = urlparse(url)
+            path = parsed.path.lower()
+            
+            # Check if the path has a file extension we should skip
+            for ext in self.skip_extensions:
+                if path.endswith(ext):
+                    return True, f"File extension {ext}"
+                # Also check for extension in query parameters (e.g., ?file=something.txt)
+                if ext in path:
+                    return True, f"File extension {ext} in path"
+            
+            # Check if URL has query parameters that suggest non-HTML content
+            query = parsed.query.lower()
+            if any(ext in query for ext in self.skip_extensions):
+                for ext in self.skip_extensions:
+                    if ext in query:
+                        return True, f"File extension {ext} in query"
+            
+            # Use mimetypes to guess content type from URL
+            guessed_type, _ = mimetypes.guess_type(url)
+            if guessed_type and guessed_type in self.skip_mime_types:
+                return True, f"MIME type {guessed_type}"
+            
+            return False, ""
+            
+        except Exception as e:
+            # If there's an error parsing the URL, skip it to be safe
+            return True, f"URL parsing error: {e}"
         
     def process_document(self, url: str, content: str, assign_new_doc_id: bool = False) -> int:
         """
@@ -82,6 +149,13 @@ class Indexer:
             
             if not url or not content:
                 print(f"Warning: Missing url or content in {file_path}")
+                return None
+            
+            # Check if URL should be skipped (e.g., .txt files, PDFs, images, etc.)
+            should_skip, reason = self.should_skip_url(url)
+            if should_skip:
+                self.skipped_urls += 1
+                print(f"Skipping URL (reason: {reason}): {url}")
                 return None
             
             doc_id = self.process_document(url, content, assign_new_doc_id=assign_new_doc_id)
@@ -228,7 +302,8 @@ class Indexer:
             'num_documents': total_documents,
             'num_unique_tokens': unique_tokens,
             'total_postings': total_postings,
-            'avg_postings_per_token': total_postings / unique_tokens if unique_tokens > 0 else 0
+            'avg_postings_per_token': total_postings / unique_tokens if unique_tokens > 0 else 0,
+            'skipped_urls': self.skipped_urls
         }
     
     def save_index(self, index_dir: str) -> None:
@@ -361,6 +436,7 @@ class Indexer:
             f"Number of indexed documents              | {analytics['num_documents']}",
             f"Number of unique tokens                  | {analytics['num_unique_tokens']}",
             f"Total size of index on disk (KB)         | {index_size_kb:.2f}",
+            f"Number of skipped URLs                   | {analytics['skipped_urls']}",
             "",
             "=" * 70,
         ]

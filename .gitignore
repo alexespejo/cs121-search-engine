@@ -3,3 +3,5 @@
 /inverted-indexes
 /test-data
 /index
+/__pycache__
+/.ipynb_checkpoints
