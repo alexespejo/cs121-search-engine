@@ -257,7 +257,6 @@ class Indexer:
         except Exception as e:
             logger.error(f"Failed to process file {file_path}: {e}")
     
-    # @TODO
     def process_files_in_batches(self, batch_size: int) -> None:
         """
         Process JSON files one-by-one, saving the index and clearing RAM every `batch_size` files.
@@ -287,7 +286,7 @@ class Indexer:
             self.file_ptr.file_idx += 1
 
             if batch_size > 0 and dirty_count >= batch_size:
-                self.inv_index.save_index_pkl(self.file_ptr.batch_counter, self.index_path, self.doc_id_to_url, self.url_to_doc_id)
+                self.inv_index.save_index_pkl(self.file_ptr.batch_counter, self.tmp_indexes_path, self.doc_id_to_url, self.url_to_doc_id)
                 self.file_ptr.save_pointer()
                 if self.debug:
                     file_path: Path = self.tmp_indexes_path / f"tmp_index_{self.file_ptr.batch_counter}.txt"
@@ -301,10 +300,11 @@ class Indexer:
                 self.file_ptr.batch_counter += 1
 
         logger.info("Final save after all files processed...")
-        self.inv_index.save_index_pkl(self.file_ptr.batch_counter, self.index_path, self.doc_id_to_url, self.url_to_doc_id)
+        self.inv_index.save_index_pkl(self.file_ptr.batch_counter, self.tmp_indexes_path, self.doc_id_to_url, self.url_to_doc_id)
 
         logger.info("All files processed successfully.")
-    
+
+    # @TODO
     def merge_indexes(self):
         pass
 
