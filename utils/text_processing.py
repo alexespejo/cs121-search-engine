@@ -1,8 +1,6 @@
 from typing import List, Dict, Set, Union
 import bs4
 
-from utils.constants import STOP_WORDS
-
 def tokenize_fields(fields: Dict[str, Union[str, List[str], List[tuple]]]) -> Dict[str, int]:
     all_text = []
     
@@ -26,10 +24,10 @@ def tokenize_fields(fields: Dict[str, Union[str, List[str], List[tuple]]]) -> Di
     
     return compute_word_frequencies(tokens)
 
-def extract_fields(content: str) -> Dict[str, Union[str, List[str], List[tuple]]]:
+def extract_fields_html(html_content: str) -> Dict[str, Union[str, List[str], List[tuple]]]:
     # idea is to extract what's most relevant to the user
     # TODO: this is a simple approach off the dome
-    soup = bs4.BeautifulSoup(content, 'html.parser')
+    soup = bs4.BeautifulSoup(html_content, 'html.parser')
     
     for element in soup(['script', 'style', 'nav', 'footer']):
         element.decompose()
@@ -69,11 +67,10 @@ def tokenize(text: str) -> List[str]:
 def compute_word_frequencies(tokens: List[str]) -> Dict[str, int]:
     res = {}
     for token in tokens:
-        if (token not in STOP_WORDS):
-            if token in res:
-                res[token] += 1
-            else:
-                res[token] = 1
+        if token in res:
+            res[token] += 1
+        else:
+            res[token] = 1
     return res
 
 def print_frequencies(frequencies: Dict[str, int]) -> None:

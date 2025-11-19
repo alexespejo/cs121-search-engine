@@ -20,7 +20,7 @@ def create_parser_indexer() -> ArgumentParser:
     parser.add_argument(
         "-b", "--batch-size",
         type=int,
-        default=100,
+        default=11_000,
         help="Number of documents to process before flushing to disk."
     )
 
