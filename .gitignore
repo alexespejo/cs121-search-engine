@@ -1,4 +1,4 @@
-# Ignore local Python virtual environment
+# Ignore local Python virtual environments
 .venv/
 /inverted-indexes
 /test-data

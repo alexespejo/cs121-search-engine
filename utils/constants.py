@@ -1,3 +1,24 @@
+from logging import DEBUG, INFO, WARNING, ERROR
+
+NS_TO_MS = 1e+6
+
+DATA_DIR_DEFAULT = "data/DEV"
+
+INDEX_DIR_DEFAULT = "index"
+DEBUG_INDEX_DIR_DEFAULT = "debug_index"
+TMP_INDEX_DIR_DEFAULT = "tmp_indexes"
+
+TOP_RESULTS_DEFAULT = 5
+
+LOG_DIR = "log"
+
+LOG_LEVELS = {
+    "debug": DEBUG,
+    "info": INFO,
+    "warn": WARNING,
+    "error": ERROR,
+}
+
 STOP_WORDS = {
     "a", "about", "above", "after", "again", "against", "all", "am", "an", "and", "any", "are", "aren't", "as", "at",
     "be", "because", "been", "before", "being", "below", "between", "both", "but", "by", "can't", "cannot", "could",
@@ -12,4 +33,22 @@ STOP_WORDS = {
     "until", "up", "very", "was", "wasn't", "we", "we'd", "we'll", "we're", "we've", "were", "weren't", "what", "what's",
     "when", "when's", "where", "where's", "which", "while", "who", "who's", "whom", "why", "why's", "with", "won't",
     "would", "wouldn't", "you", "you'd", "you'll", "you're", "you've", "your", "yours", "yourself", "yourselves"
+}
+
+SKIP_EXTENSIONS = {
+    '.txt', '.pdf', '.doc', '.docx', '.xls', '.xlsx', 
+    '.ppt', '.pptx', '.zip', '.rar', '.tar', '.gz',
+    '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.svg', '.ico',
+    '.mp3', '.mp4', '.avi', '.mov', '.wav', '.flv',
+    '.exe', '.dll', '.bin', '.dmg', '.iso',
+    '.css', '.js', '.json', '.xml', '.csv'
+}
+
+SKIP_MIME_TYPES = {
+    'text/plain', 'text/css', 'text/javascript', 'application/javascript',
+    'application/json', 'application/xml', 'text/xml', 'text/csv',
+    'application/pdf', 'application/zip', 'application/x-rar-compressed',
+    'image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/svg+xml',
+    'video/mp4', 'video/mpeg', 'audio/mpeg', 'audio/wav',
+    'application/octet-stream'
 }
