@@ -3,10 +3,9 @@ from logging import DEBUG, INFO, WARNING, ERROR
 NS_TO_MS = 1e+6
 
 DATA_DIR_DEFAULT = "data/DEV"
-
 INDEX_DIR_DEFAULT = "index"
-DEBUG_INDEX_DIR_DEFAULT = "debug_index"
-TMP_DIR = "tmp"
+DEBUG_INDEX_DIR_DEFAULT = "index_debug"
+TMP_DIR = "index_tmp"
 
 TOP_RESULTS_DEFAULT = 5
 

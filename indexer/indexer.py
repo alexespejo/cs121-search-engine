@@ -139,7 +139,7 @@ class Indexer:
             raise FileNotFoundError(error_message)
         logger.info("Deleting current index...")
         rm_dir(self.index_path, only_contents=True)
-        rm_dir(self.tmp_indexes_path)
+        rm_dir(self.tmp_indexes_path, only_contents=True)
         logger.info("Index deleted")
 
     def reset_index(self) -> None:
