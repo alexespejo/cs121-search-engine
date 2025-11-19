@@ -1,5 +1,5 @@
 from indexer.inverted_index import InvertedIndex
-from query import Query, QueryType
+from search.query import Query, QueryType
 import utils.constants as const
 from utils.file_io import is_valid_file
 
