@@ -1,13 +1,21 @@
 from logging import DEBUG, INFO, WARNING, ERROR
 
 NS_TO_MS = 1e+6
+BYTES_TO_KB = 1024
+BYTES_TO_MB = 1024**2
+BYTES_TO_GB = 1024**3
+BYTES_TO_TB = 1024**4
 
 DATA_DIR_DEFAULT = "data/DEV"
 INDEX_DIR_DEFAULT = "index"
 DEBUG_INDEX_DIR_DEFAULT = "index_debug"
 TMP_DIR = "index_tmp"
+META_FILENAME = "meta"
+
+INDEX_FILENAME = "inverted_index"
 
 TOP_RESULTS_DEFAULT = 5
+BATCH_SIZE_DEFAULT = 15_000
 
 LOG_DIR = "log"
 
@@ -16,6 +24,50 @@ LOG_LEVELS = {
     "info": INFO,
     "warn": WARNING,
     "error": ERROR,
+}
+
+SUB_INDEX_MAPPING = {
+    "a" : "sub_inverted_index_a_e.pkl",
+    "b" : "sub_inverted_index_a_e.pkl",
+    "c" : "sub_inverted_index_a_e.pkl",
+    "d" : "sub_inverted_index_a_e.pkl",
+    "e" : "sub_inverted_index_a_e.pkl",
+
+    "f" : "sub_inverted_index_f_j.pkl",
+    "g" : "sub_inverted_index_f_j.pkl",
+    "h" : "sub_inverted_index_f_j.pkl",
+    "i" : "sub_inverted_index_f_j.pkl",
+    "j" : "sub_inverted_index_f_j.pkl",
+
+    "k" : "sub_inverted_index_k_o.pkl",
+    "l" : "sub_inverted_index_k_o.pkl",
+    "m" : "sub_inverted_index_k_o.pkl",
+    "n" : "sub_inverted_index_k_o.pkl",
+    "o" : "sub_inverted_index_k_o.pkl",
+
+    "p" : "sub_inverted_index_p_t.pkl",
+    "q" : "sub_inverted_index_p_t.pkl",
+    "r" : "sub_inverted_index_p_t.pkl",
+    "s" : "sub_inverted_index_p_t.pkl",
+    "t" : "sub_inverted_index_p_t.pkl",
+
+    "u" : "sub_inverted_index_u_z.pkl",
+    "v" : "sub_inverted_index_u_z.pkl",
+    "w" : "sub_inverted_index_u_z.pkl",
+    "x" : "sub_inverted_index_u_z.pkl",
+    "y" : "sub_inverted_index_u_z.pkl",
+    "z" : "sub_inverted_index_u_z.pkl",
+
+    "0" : "sub_inverted_index_0_9.pkl",
+    "1" : "sub_inverted_index_0_9.pkl",
+    "2" : "sub_inverted_index_0_9.pkl",
+    "3" : "sub_inverted_index_0_9.pkl",
+    "4" : "sub_inverted_index_0_9.pkl",
+    "5" : "sub_inverted_index_0_9.pkl",
+    "6" : "sub_inverted_index_0_9.pkl",
+    "7" : "sub_inverted_index_0_9.pkl",
+    "8" : "sub_inverted_index_0_9.pkl",
+    "9" : "sub_inverted_index_0_9.pkl",
 }
 
 SKIP_EXTENSIONS = {

@@ -2,11 +2,36 @@ from pathlib import Path
 from typing import Literal
 import shutil
 import os
+import pickle
 
-BYTES_TO_KB = 1024
-BYTES_TO_MB = 1024**2
-BYTES_TO_GB = 1024**3
-BYTES_TO_TB = 1024**4
+import utils.constants as const
+
+class FilePointer:
+    def __init__(self, file_idx: int = 0, batch_counter: int = 0):
+        self.file_idx: int = file_idx
+        self.batch_counter: int = batch_counter
+        self.path: Path = const.TMP_DIR / Path("cursor.pkl")
+
+    def exists_on_disk(self) -> bool:
+        return self.path.exists()
+    
+    def save_pointer(self) -> None:
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        with open(self.path, "wb") as f:
+            pickle.dump(self, f)
+
+    @classmethod
+    def load_pointer(cls) -> "FilePointer":
+        """Load the pointer from disk. Returns a FilePointer instance."""
+        path: Path = const.TMP_DIR / Path("cursor.pkl")
+        if not path.exists():
+            raise FileNotFoundError(f"No pointer file found at {path}")
+        with open(path, "rb") as f:
+            obj = pickle.load(f)
+        if not isinstance(obj, cls):
+            raise TypeError(f"Expected a FilePointer object, got {type(obj)}")
+        return obj
+
 
 def is_valid_dir(path: Path):
     return path.exists() and path.is_dir()
@@ -40,10 +65,10 @@ def get_dir_size(path: Path, recursive: bool = False, unit: Literal["bytes", "KB
 
     unit_factors = {
         "bytes": 1,
-        "KB": BYTES_TO_KB,
-        "MB": BYTES_TO_MB,
-        "GB": BYTES_TO_GB,
-        "TB": BYTES_TO_TB,
+        "KB": const.BYTES_TO_KB,
+        "MB": const.BYTES_TO_MB,
+        "GB": const.BYTES_TO_GB,
+        "TB": const.BYTES_TO_TB,
     }
 
     return total_bytes / unit_factors[unit]

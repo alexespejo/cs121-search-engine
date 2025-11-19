@@ -27,8 +27,7 @@ if __name__ == '__main__':
     # Run indexer
     indexer = Indexer(data_dir, index_dir, args.batch_size)
     indexer.debug = args.debug
-    if (args.reset):
+    if not args.keep:
         indexer.delete_index()
     indexer.run()
-    indexer.merge_indexes()
     indexer.display_report()

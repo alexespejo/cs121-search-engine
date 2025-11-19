@@ -1,7 +1,10 @@
 from typing import List, Dict, Set, Union
 import bs4
+from bs4 import MarkupResemblesLocatorWarning
+import warnings
+warnings.filterwarnings("ignore", category=MarkupResemblesLocatorWarning)
 
-def tokenize_fields(fields: Dict[str, Union[str, List[str], List[tuple]]]) -> Dict[str, int]:
+def tokenize_fields(fields: Dict[str, Union[str, List[str], List[tuple]]]) -> tuple[Dict[str, int], int]:
     all_text = []
     
     for field_name in ['title', 'meta_desc', 'body']:
@@ -22,7 +25,7 @@ def tokenize_fields(fields: Dict[str, Union[str, List[str], List[tuple]]]) -> Di
     combined_text = ' '.join(all_text)
     tokens = tokenize(combined_text)
     
-    return compute_word_frequencies(tokens)
+    return compute_word_frequencies(tokens), len(tokens)
 
 def extract_fields_html(html_content: str) -> Dict[str, Union[str, List[str], List[tuple]]]:
     # idea is to extract what's most relevant to the user

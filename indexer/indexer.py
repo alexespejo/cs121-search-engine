@@ -2,46 +2,19 @@ import json
 import mimetypes
 import logging
 import pickle
+import string
+import copy
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional, Union
-from collections import defaultdict
+from typing import Dict, List, Tuple, Union
 from urllib.parse import urlparse
-from dataclasses import dataclass
 
 import utils.constants as const
 from utils.text_processing import extract_fields_html, tokenize_fields
-from utils.file_io import is_valid_dir, is_valid_file, get_dir_size, rm_dir
+from utils.file_io import is_valid_dir, is_valid_file, get_dir_size, rm_dir, FilePointer
 from indexer.inverted_index import InvertedIndex
 
 logger = logging.getLogger(__name__)
 
-class FilePointer:
-    def __init__(self, file_idx: int = 0, batch_counter: int = 0):
-        self.file_idx: int = file_idx
-        self.batch_counter: int = batch_counter
-
-    def exists_on_disk(self) -> bool:
-        path: Path = const.TMP_DIR / Path("cursor.pkl")
-        return path.exists()
-    
-    def save_pointer(self) -> None:
-        path: Path = const.TMP_DIR / Path("cursor.pkl")
-        path.parent.mkdir(parents=True, exist_ok=True)
-        with open(path, "wb") as f:
-            pickle.dump(self, f)
-
-    @classmethod
-    def load_pointer(cls) -> "FilePointer":
-        """Load the pointer from disk. Returns a FilePointer instance."""
-        path: Path = const.TMP_DIR / Path("cursor.pkl")
-        if not path.exists():
-            raise FileNotFoundError(f"No pointer file found at {path}")
-        with open(path, "rb") as f:
-            obj = pickle.load(f)
-        if not isinstance(obj, cls):
-            raise TypeError(f"Expected a FilePointer object, got {type(obj)}")
-        return obj
-    
 class Indexer:
     def __init__(self, data_dir_str: str = const.DATA_DIR_DEFAULT, index_dir_str: str = const.INDEX_DIR_DEFAULT, batch_size: int = 0):
         """
@@ -63,8 +36,6 @@ class Indexer:
             data_path (Path): Path object for the data directory.
             index_path (Path): Path object for the index directory.
             inv_index (InvertedIndex): Empty inverted index instance.
-            doc_id_to_url (Dict[int, str]): Mapping from document IDs to URLs.
-            url_to_doc_id (Dict[str, int]): Mapping from URLs to document IDs.
             next_doc_id (int): Counter for assigning new document IDs.
             file_ptr (FilePointer): Default FilePointer instance (0, 0)
         """
@@ -97,14 +68,11 @@ class Indexer:
         logger.info("Initializing Indexer variables...")
         
         self.inv_index: InvertedIndex = InvertedIndex()
-        self.doc_id_to_url: Dict[int, str] = {}
-        self.url_to_doc_id: Dict[str, int] = {}
         self.file_ptr = FilePointer()
         
         self.debug = False
         self.next_doc_id: int = 0
         self.batch_size: int = batch_size
-        self.file_ptr = FilePointer()
 
         self.file_list: list[Path] = self.load_file_list()
 
@@ -113,27 +81,27 @@ class Indexer:
     def run(self) -> None:
         logger.info("Running Indexer...")
         if (self.batch_size <= 0):
-            logger.info("Processing in batches of 1 directory each")
-            self.process_files_in_batches(0)
-        else:
-            logger.info(f"Processing in batches of {self.batch_size} JSON files each")
-            self.process_files_in_batches(self.batch_size)
+            error_message: str = f"batch_size cannot be <= 0: {self.batch_size}"
+            logger.error(error_message)
+            raise ValueError(error_message)
+        logger.info(f"Processing in batches of {self.batch_size} JSON files each")
+        self.process_files_in_batches(self.batch_size)
+        self.merge_indexes()
         rm_dir(self.tmp_indexes_path)
         logger.info("Indexer done")
 
     def load_file_list(self) -> list[Path]:
         """Return list of all JSON files one level deep in data_dir."""
         file_list = []
-        for subdir in self.data_path.iterdir():
-            if subdir.is_dir():
-                file_list.extend(sorted(subdir.glob("*.json")))
+        file_list = [p for p in self.data_path.rglob("*.json") if p.is_file()]
+        file_list.sort()
         return file_list
 
     def delete_index(self) -> None:
         """
         Delete current index on file.
         """
-        if not is_valid_dir(self.data_path):
+        if not is_valid_dir(self.index_path):
             error_message: str = f"data directory {self.data_path} is invalid."
             logger.error(error_message)
             raise FileNotFoundError(error_message)
@@ -144,8 +112,6 @@ class Indexer:
 
     def reset_index(self) -> None:
         self.inv_index = InvertedIndex()
-        self.doc_id_to_url = {}
-        self.url_to_doc_id = {}
 
     def index_document(self, url: str, content: str, reuse_doc_id: bool = False) -> None:
         """
@@ -160,13 +126,13 @@ class Indexer:
         Returns:
             None
         """
-        if not reuse_doc_id or url not in self.url_to_doc_id:
+        if not reuse_doc_id or url not in self.inv_index.url_to_doc_id:
             doc_id = self.next_doc_id
             self.next_doc_id += 1
-            self.url_to_doc_id[url] = doc_id # map url to doc_id
-            self.doc_id_to_url[doc_id] = url # map doc_id to url
+            self.inv_index.url_to_doc_id[url] = doc_id # map url to doc_id
+            self.inv_index.doc_id_to_url[doc_id] = url # map doc_id to url
         else:
-            doc_id = self.url_to_doc_id[url]
+            doc_id = self.inv_index.url_to_doc_id[url]
         
         try:
             fields = {}
@@ -177,13 +143,13 @@ class Indexer:
 
         # tokenize the fields
         try:
-            term_frequencies = tokenize_fields(fields)
+            term_frequencies, word_total = tokenize_fields(fields)
         except Exception as e:
             logger.warning(f"Failed to tokenize {url}: {e}")
             return
         # add the term frequencies to the index
         for term, frequency in term_frequencies.items():
-            self.inv_index.addEntry(term, doc_id, frequency)
+            self.inv_index.add_entry(term, doc_id, float(frequency) / float(word_total))
 
     def is_file_skippable(self, url: str) -> Tuple[bool, str]:
         """
@@ -244,11 +210,13 @@ class Indexer:
             
             if not url or not content:
                 logger.warning(f"Missing url or content in {file_path}")
+                return
             
             should_skip, reason = self.is_file_skippable(url)
             if should_skip:
                 logger.debug(f"Skipping URL (reason: {reason}): {url}")
                 logger.debug(f"Skipping file: {file_path}")
+                return
 
             self.index_document(url, content, reuse_doc_id=reuse_doc_id)
             
@@ -286,7 +254,7 @@ class Indexer:
             self.file_ptr.file_idx += 1
 
             if batch_size > 0 and dirty_count >= batch_size:
-                self.inv_index.save_index_pkl(self.file_ptr.batch_counter, self.tmp_indexes_path, self.doc_id_to_url, self.url_to_doc_id)
+                self.inv_index.save_index_pkl(self.tmp_indexes_path, self.file_ptr.batch_counter)
                 self.file_ptr.save_pointer()
                 if self.debug:
                     file_path: Path = self.tmp_indexes_path / f"tmp_index_{self.file_ptr.batch_counter}.txt"
@@ -300,56 +268,133 @@ class Indexer:
                 self.file_ptr.batch_counter += 1
 
         logger.info("Final save after all files processed...")
-        self.inv_index.save_index_pkl(self.file_ptr.batch_counter, self.tmp_indexes_path, self.doc_id_to_url, self.url_to_doc_id)
+        self.inv_index.save_index_pkl(self.tmp_indexes_path, self.file_ptr.batch_counter)
 
         logger.info("All files processed successfully.")
 
-    # @TODO
     def merge_indexes(self):
-        pass
-
-    # @TODO
-    def get_analytics(self) -> Dict[str, int | float]:
-        unique_tokens = len(self.inv_index.index_dict)
-        total_documents = len(self.doc_id_to_url)
+        if not is_valid_dir(self.index_path):
+            error_message: str = f"index directory {self.index_path} is invalid."
+            logger.error(error_message)
+            raise FileNotFoundError(error_message)
         
-        total_postings = sum(len(postings) for postings in self.inv_index.index_dict.values())
-        
-        return {
-            'num_documents': total_documents,
-            'num_unique_tokens': unique_tokens,
-            'total_postings': total_postings,
-            'avg_postings_per_token': total_postings / unique_tokens if unique_tokens > 0 else 0,
-        }        
+        pkl_files = sorted(Path(const.TMP_DIR).rglob(f"{const.INDEX_FILENAME}_*.pkl"))
 
-    # @TODO
+        if not pkl_files:
+            logger.warning("No PKL files found to merge.")
+            return
+
+        # Start with the first file
+        main_file = pkl_files[0]
+        with open(main_file, 'rb') as f:
+            main_index: InvertedIndex = pickle.load(f)
+
+        for other_file in pkl_files[1:]:
+            with open(other_file, 'rb') as f:
+                other_index: InvertedIndex = pickle.load(f)
+
+            # Merge index_dict
+            for term, postings in other_index.index_dict.items():
+                main_index.index_dict[term].extend(copy.deepcopy(postings))
+
+            # Merge doc_id mappings (assuming no ID collisions)
+            main_index.doc_id_to_url.update(other_index.doc_id_to_url)
+            main_index.url_to_doc_id.update(other_index.url_to_doc_id)
+
+        for term, postings in main_index.index_dict.items():
+            postings.sort(key=lambda x: x[0])
+
+        # Save merged index back
+        merged_file = self.index_path / f"main_{const.INDEX_FILENAME}.pkl"
+        with open(merged_file, "wb") as f:
+            pickle.dump(main_index, f)
+
+        meta: dict = main_index.get_analytics()
+        meta_file: str = f"{self.index_path}/{const.META_FILENAME}.pkl"
+
+        with open(meta_file, "wb") as f:
+            pickle.dump(meta, f)
+
+        logger.info(f"Merged index saved to {merged_file}")
+
+    def split_index_by_letter(self):
+        """
+        Split a merged inverted index into multiple smaller indices
+        according to SUB_INDEX_MAPPING.
+        """
+        from utils.constants import SUB_INDEX_MAPPING  # make sure it's imported
+
+        main_file = self.index_path / f"main_{const.INDEX_FILENAME}.pkl"
+        if not is_valid_file(main_file):
+            raise FileNotFoundError(f"Main index file missing: {main_file}")
+
+        # Load main merged index
+        with open(main_file, 'rb') as f:
+            main_index: InvertedIndex = pickle.load(f)
+
+        # Ensure index directory exists
+        self.index_path.mkdir(parents=True, exist_ok=True)
+
+        # Prepare sub-index containers for each mapped file
+        split_indices: Dict[str, InvertedIndex] = {}
+        for file_name in set(SUB_INDEX_MAPPING.values()):
+            split_indices[file_name] = InvertedIndex()
+
+        # Assign terms to sub-indexes based on mapping
+        for term, postings in main_index.index_dict.items():
+            first_char = term[0].lower()
+            sub_index_file = SUB_INDEX_MAPPING[first_char]
+            split_indices[sub_index_file].index_dict[term] = copy.deepcopy(postings)
+
+        # Copy doc_id mappings to each section
+        for sub_index in split_indices.values():
+            sub_index.doc_id_to_url = main_index.doc_id_to_url.copy()
+            sub_index.url_to_doc_id = main_index.url_to_doc_id.copy()
+
+        # Save each sub-index
+        for file_name, index in split_indices.items():
+            out_file = self.index_path / file_name
+            with open(out_file, 'wb') as f:
+                pickle.dump(index, f)
+            print(f"Saved sub-index -> {out_file}")
+
     def display_report(self, report_output_file: str | None = None) -> None:
         """
         Generate a report with analytics about the index.
 
         Args:
-            output_file (str | None): Path to save the report. If None, prints to stdout.
+            report_output_file (str | None): Path to save the report. 
+                                            If None, prints to stdout.
         """
-        if (not is_valid_dir(self.index_path)):
-            error_message: str = f"index directory invalid / missing {self.index_path}."
+        if not is_valid_dir(self.index_path):
+            error_message = f"index directory invalid / missing {self.index_path}."
             logger.error(error_message)
             raise IOError(error_message)
+
         logger.info("Displaying report...")
-        analytics = self.get_analytics()
+        analytics = self.inv_index.get_analytics()
         index_size_kb = get_dir_size(self.index_path, unit="KB")
 
-        # Format report
+        # Helper for aligned lines
+        def line(label: str, value: str | int | float) -> str:
+            return f"{label.ljust(40)} | {value}"
+
         report_lines = [
             "=" * 70,
             "INDEX ANALYTICS REPORT",
             "=" * 70,
             "",
-            f"{'Metric'.ljust(40)} | Value",
+            line("Metric", "Value"),
             "-" * 70,
-            f"{'Number of indexed documents'.ljust(40)} | {analytics['num_documents']}",
-            f"{'Number of unique tokens'.ljust(40)} | {analytics['num_unique_tokens']}",
-            f"{'Total size of index on disk (KB)'.ljust(40)} | {index_size_kb:.2f}",
-            f"{'Average postings per token'.ljust(40)} | {analytics['avg_postings_per_token']:.2f}",
+            line("Number of indexed documents", analytics["num_documents"]),
+            line("Number of unique tokens", analytics["num_unique_tokens"]),
+            line("Total postings", analytics["total_postings"]),
+            line("Total token occurrences", analytics["total_token_occurrences"]),
+            line("Average postings per token", f"{analytics['avg_postings_per_token']:.2f}"),
+            line("Median postings per token", analytics["median_postings_per_token"]),
+            line("Max postings per token", analytics["max_postings_per_token"]),
+            line("Min postings per token", analytics["min_postings_per_token"]),
+            line("Total size of index on disk (KB)", f"{index_size_kb:.2f}"),
             "",
             "=" * 70,
         ]
@@ -365,4 +410,3 @@ class Indexer:
         else:
             print("\n" + report_content)
             logger.info("Report printed to stdout")
-        logger.info("Report displayed")

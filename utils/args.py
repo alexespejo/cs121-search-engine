@@ -1,3 +1,4 @@
+import utils.constants as const
 from argparse import ArgumentParser
 
 def create_parser_indexer() -> ArgumentParser:
@@ -6,21 +7,21 @@ def create_parser_indexer() -> ArgumentParser:
     parser.add_argument(
         "-t", "--target-directory",
         type=str,
-        default=None,
+        default=const.DATA_DIR_DEFAULT,
         help="Directory containing input documents."
     )
 
     parser.add_argument(
         "-i", "--index-directory",
         type=str,
-        default=None,
+        default=const.INDEX_DIR_DEFAULT,
         help="Directory where the index will be stored."
     )
 
     parser.add_argument(
         "-b", "--batch-size",
         type=int,
-        default=11_000,
+        default=const.BATCH_SIZE_DEFAULT,
         help="Number of documents to process before flushing to disk."
     )
 
@@ -35,13 +36,14 @@ def create_parser_indexer() -> ArgumentParser:
     parser.add_argument(
         "-d", "--debug",
         action="store_true",
+        default=False,
         help="Enable debug mode with debug paths and debug logging."
     )
 
     parser.add_argument(
-        "-r", "--reset",
+        "-k", "--keep",
         action="store_true",
-        help="Enable reset of index before program start."
+        help="Disable reset of index before program start."
     )
 
     return parser
@@ -52,14 +54,14 @@ def create_parser_search() -> ArgumentParser:
     parser.add_argument(
         "-n", "--num-results",
         type=int,
-        default=5,
+        default=const.TOP_RESULTS_DEFAULT,
         help="Set how many of the top results are shown."
     )
 
     parser.add_argument(
         "-i", "--index-directory",
         type=str,
-        default=None,
+        default=const.INDEX_DIR_DEFAULT,
         help="Directory where the index is stored."
     )
 
@@ -74,6 +76,7 @@ def create_parser_search() -> ArgumentParser:
     parser.add_argument(
         "-d", "--debug",
         action="store_true",
+        default=False,
         help="Enable debug mode with debug paths and debug logging."
     )
     

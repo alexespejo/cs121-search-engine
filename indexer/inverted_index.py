@@ -1,4 +1,5 @@
 from utils.file_io import is_valid_dir
+import utils.constants as const
 
 from collections import defaultdict
 from typing import Dict, List
@@ -10,10 +11,41 @@ logger = getLogger(__name__)
 
 class InvertedIndex:
     def __init__(self):
-        self.index_dict: Dict[str, List[tuple[int, int]]] = defaultdict(list)
+        self.index_dict: Dict[str, List[tuple]] = defaultdict(list)
+        self.doc_id_to_url: Dict[int, str] = {}
+        self.url_to_doc_id: Dict[str, int] = {}
 
-    def addEntry(self, term: str, doc_id: int, frequency: int) -> None:
-        self.index_dict[term].append((doc_id, frequency))
+    def add_entry(self, term: str, doc_id: int, term_frequency: float) -> None:
+        self.index_dict[term].append((doc_id, term_frequency))
+
+    def get_analytics(self) -> Dict[str, int | float]:
+        index = self.index_dict
+        doc_map = self.doc_id_to_url
+
+        num_documents = len(doc_map)
+        num_unique_tokens = len(index)
+
+        # postings_per_token: list of lengths of each postings list
+        postings_per_token = [len(postings) for postings in index.values()]
+        total_postings = sum(postings_per_token)
+
+        # total occurrences counts frequency values inside postings lists
+        total_token_occurrences = sum(freq for postings in index.values() for (_, freq) in postings)
+
+        return {
+            "num_documents": num_documents,
+            "num_unique_tokens": num_unique_tokens,
+            "total_postings": total_postings,
+            "total_token_occurrences": total_token_occurrences,
+            "avg_postings_per_token": (total_postings / num_unique_tokens) if num_unique_tokens else 0,
+            "max_postings_per_token": max(postings_per_token) if postings_per_token else 0,
+            "min_postings_per_token": min(postings_per_token) if postings_per_token else 0,
+            "median_postings_per_token": (
+                sorted(postings_per_token)[len(postings_per_token) // 2]
+                if postings_per_token else 0
+            ),
+        }
+
 
     def display(self, file_name = None) -> None:
         lines = [
@@ -40,50 +72,31 @@ class InvertedIndex:
             with open(file_path, "w", encoding="utf-8") as f:
                 f.write(content)
 
-    def save_index_pkl(self, batch_num: int, index_path: Path, doc_id_to_url: dict[int, str], url_to_doc_id: dict[str, int]) -> None:
+    def save_index_pkl(self, index_path: Path, batch_num: int) -> None:
         if not is_valid_dir(index_path):
             error_message: str = f"index directory invalid / missing {index_path}."
             logger.error(error_message)
             raise IOError(error_message)
 
-        batch_folder = index_path / str(batch_num)
-        batch_folder.mkdir(parents=True, exist_ok=True)
-
         # Save the inverted index
-        index_file = batch_folder / 'inverted_index.pkl'
+        index_file = index_path / f"{const.INDEX_FILENAME}_{str(batch_num)}.pkl"
         with open(index_file, 'wb') as f:
-            pickle.dump(dict(self.index_dict), f)
+            pickle.dump(self, f)
 
-        # Save doc_id_to_url mapping
-        doc_map_file = batch_folder / 'doc_id_to_url.pkl'
-        with open(doc_map_file, 'wb') as f:
-            pickle.dump(doc_id_to_url, f)
-
-        # Save url_to_doc_id mapping
-        url_map_file = batch_folder / 'url_to_doc_id.pkl'
-        with open(url_map_file, 'wb') as f:
-            pickle.dump(url_to_doc_id, f)
-
-        logger.info(f"Index {batch_num} saved to {batch_folder}")
+        logger.info(f"Index {batch_num} saved to {index_file}")
     
-    # @TODO fix so it aggregates indexes
-    def load_index(self, index_path: Path) -> tuple[dict[int, str], dict[str, int]]:
+    # DO NOT USE
+    def load_index_pkl(self, index_path: Path) -> None:
         """Load index from disk"""
         if not is_valid_dir(index_path):
             error_message: str = f"index directory invalid / missing {index_path}."
             logger.error(error_message)
             raise IOError(error_message)
-        
-        index_file = index_path / 'inverted_index.pkl'
+
+        index_file = index_path / const.INDEX_FILENAME # doesn't currently exist as this filename, splitting into per letter
         with open(index_file, 'rb') as f:
-            index_dict = pickle.load(f)
-            self.index_dict = defaultdict(list, index_dict)
+            loaded_obj: InvertedIndex = pickle.load(f)
         
-        doc_map_file = index_path / 'doc_id_to_url.pkl'
-        with open(doc_map_file, 'rb') as f:
-            doc_id_to_url: dict[int, str] = pickle.load(f)
-        
-        url_map_file = index_path / 'url_to_doc_id.pkl'
-        with open(url_map_file, 'rb') as f:
-            url_to_doc_id: dict[str, int] = pickle.load(f)
-        return doc_id_to_url, url_to_doc_id
+        self.index_dict = loaded_obj.index_dict
+        self.doc_id_to_url = loaded_obj.doc_id_to_url
+        self.url_to_doc_id = loaded_obj.url_to_doc_id
