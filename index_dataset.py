@@ -5,8 +5,6 @@ from indexer.indexer import Indexer
 
 from logging import getLogger
 
-# Process using batch processing
-# Each folder is a batch
 if __name__ == '__main__':
     # Parse args
     parser = create_parser_indexer()

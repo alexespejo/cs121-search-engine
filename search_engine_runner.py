@@ -27,8 +27,9 @@ if __name__ == '__main__':
     
     search_engine: SearchEngine = SearchEngine(index_dir)
 
-    # Prompt user indefinite loop until Ctrl C
+    # Run search engine
     while (True):
+        # Prompt user indefinite loop until Ctrl C
         search_engine.accept_query("Enter Query: ")
         before = perf_counter_ns()
 
