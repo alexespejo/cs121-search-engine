@@ -13,7 +13,11 @@ else
     echo "Tmux session '$SESSION_NAME' already exists."
 fi
 
-tmux send-keys -t "$SESSION_NAME" "python3 run_indexer.py" C-m
+if [[ "$1" == "-i" ]]; then
+    shift
+    tmux send-keys -t "$SESSION_NAME" "python3 run_indexer.py" C-m
+fi
+
 for test in "$@"; do
     tmux send-keys -t "$SESSION_NAME" "python3 run_search_engine.py < tests/$test.txt &> tests/$test.result" C-m
 done
