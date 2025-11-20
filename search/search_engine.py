@@ -2,6 +2,7 @@ from indexer.inverted_index import InvertedIndex
 from query import Query, QueryType
 import utils.constants as const
 from utils.file_io import is_valid_file
+from collections import defaultdict
 
 import pickle
 import bisect
@@ -28,19 +29,39 @@ class SearchEngine:
         query_str: str = input(input_message)
         self.query = Query(query_str)
 
+    def get_term_postings(inverted_index, term) -> set[tuple[int, float]]:
+        # return a set of tuples where each tuple contains docId and docFrequency
+        pass
+        
+
     def boolean_query(self) -> list[tuple[str, float]]:
-        results = []
+
+        docIdScoreMap = defaultdict(list)
+        inv_index: InvertedIndex = pickle.load(f)
+        
+        initialSet = self.query.parsed_query[0]
+        # modify loop to skip initial term since we already have it above ^
         for term in self.query.parsed_query:
-            word_key: str = term[0]
-            with open(const.SUB_INDEX_MAPPING[word_key], "rb") as f:
-                inv_index: InvertedIndex = pickle.load(f)
-                num_docs_contain: int = len(inv_index.index_dict.get(term, [0]))
-                postings = inv_index.index_dict.get(term, [])
-                for doc_id, tf in postings:
-                    idf: float = log(float(self.meta["num_documents"]) / float(num_docs_contain)) # idf of a word
-                    tf_idf_score: float = float(tf * idf)
-                    results.append((inv_index.doc_id_to_url.get(doc_id), tf_idf_score))
-        return sorted(results)
+            initialSet.intersect(get_term_postings(inv_index, term))
+            
+
+
+        # USING OLD LOGIC AS A REFERENCE:
+
+        # results = []
+        # for term in self.query.parsed_query:
+        #     # get documents where each term is present, combine them
+        #     word_key: str = term[0]
+        #     with open(const.SUB_INDEX_MAPPING[word_key], "rb") as f:
+        #         inv_index: InvertedIndex = pickle.load(f)
+        #         num_docs_contain: int = len(inv_index.index_dict.get(term, [0]))
+        #         postings = inv_index.index_dict.get(term, [])
+        #         for doc_id, tf in postings:
+        #             idf: float = log(float(self.meta["num_documents"]) / float(num_docs_contain)) # idf of a word
+        #             tf_idf_score: float = float(tf * idf)
+        #             results.append((inv_index.doc_id_to_url.get(doc_id), tf_idf_score))
+        # return sorted(results)
+
 
     def get_search_results(self, type: QueryType = QueryType.boolean, top: int = const.TOP_RESULTS_DEFAULT) -> list[str]:
         results_and_score: list[tuple[str, float]] = []
