@@ -1,8 +1,10 @@
 import utils.constants as const
 from utils.args import create_parser_indexer
 from utils.log_setup import setup_logging
-from indexer.indexer import Indexer
+from indexer.indexer import Indexer, get_file_list, load_file_list, save_file_list
+from utils.file_io import is_valid_file
 
+from pathlib import Path
 from logging import getLogger
 
 if __name__ == '__main__':
@@ -30,4 +32,5 @@ if __name__ == '__main__':
     if not args.keep:
         indexer.delete_index()
     indexer.run()
+    # indexer.split_index_by_letter() # DEPRECATED
     indexer.display_report()

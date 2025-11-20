@@ -1,9 +1,8 @@
 import json
 import mimetypes
 import logging
+import gc
 import pickle
-import string
-import copy
 from pathlib import Path
 from typing import Dict, List, Tuple, Union
 from urllib.parse import urlparse
@@ -11,10 +10,35 @@ from urllib.parse import urlparse
 import utils.constants as const
 from utils.text_processing import extract_fields_html, tokenize_fields
 from utils.file_io import is_valid_dir, is_valid_file, get_dir_size, rm_dir, FilePointer
-from indexer.inverted_index import InvertedIndex
+from indexer.inverted_index import InvertedIndex, open_mmap, load_index_from_mmap
 
 logger = logging.getLogger(__name__)
 
+def get_file_list(data_dir_str: str) -> list[Path]:
+    """Return list of all JSON files in a directory."""
+    data_path: Path = Path(data_dir_str)
+    if (not is_valid_dir(data_path)):
+        error_message: str = f"Data directory {data_path} is invalid"
+        logger.error(error_message)
+        raise FileNotFoundError(error_message)
+    file_list = sorted([p for p in data_path.rglob("*.json") if p.is_file()])
+    return file_list
+
+def save_file_list(file_list: list[Path]):
+    with open("file_list.pkl", "wb") as f:
+        pickle.dump(file_list, f)
+
+def load_file_list(file_list_str: str) -> list[Path]:
+    file_list_path = Path(file_list_str)
+    if (not is_valid_file(file_list_path)):
+        error_message: str = f"File list path: {file_list_path} is invalid"
+        logger.error(error_message)
+        raise FileNotFoundError(error_message)
+    
+    with open(file_list_path, "rb") as f:
+        file_list: list[Path] = pickle.load(f)
+        return file_list
+    
 class Indexer:
     def __init__(self, data_dir_str: str = const.DATA_DIR_DEFAULT, index_dir_str: str = const.INDEX_DIR_DEFAULT, batch_size: int = 0):
         """
@@ -74,7 +98,14 @@ class Indexer:
         self.next_doc_id: int = 0
         self.batch_size: int = batch_size
 
-        self.file_list: list[Path] = self.load_file_list()
+        file_list_path = Path(const.FILE_LIST_FILENAME)
+        if is_valid_file(file_list_path):
+            self.file_list: list[Path] = load_file_list(const.FILE_LIST_FILENAME)
+        else:
+            self.file_list: list[Path] = get_file_list(str(self.data_path))
+            save_file_list(self.file_list)
+
+        logger.warning("File list is empty")
 
         logger.info("Variables initialized")
 
@@ -90,13 +121,6 @@ class Indexer:
         rm_dir(self.tmp_indexes_path)
         logger.info("Indexer done")
 
-    def load_file_list(self) -> list[Path]:
-        """Return list of all JSON files one level deep in data_dir."""
-        file_list = []
-        file_list = [p for p in self.data_path.rglob("*.json") if p.is_file()]
-        file_list.sort()
-        return file_list
-
     def delete_index(self) -> None:
         """
         Delete current index on file.
@@ -111,6 +135,8 @@ class Indexer:
         logger.info("Index deleted")
 
     def reset_index(self) -> None:
+        del self.inv_index
+        gc.collect()
         self.inv_index = InvertedIndex()
 
     def index_document(self, url: str, content: str, reuse_doc_id: bool = False) -> None:
@@ -126,13 +152,17 @@ class Indexer:
         Returns:
             None
         """
-        if not reuse_doc_id or url not in self.inv_index.url_to_doc_id:
+        if reuse_doc_id:
+            doc_id = next((key for key, value in self.inv_index.doc_id_to_url.items() if value == url), None)
+            if doc_id is None:
+                doc_id = self.next_doc_id
+                self.next_doc_id += 1
+                self.inv_index.doc_id_to_url[doc_id] = url # map doc_id to url
+
+        else:
             doc_id = self.next_doc_id
             self.next_doc_id += 1
-            self.inv_index.url_to_doc_id[url] = doc_id # map url to doc_id
             self.inv_index.doc_id_to_url[doc_id] = url # map doc_id to url
-        else:
-            doc_id = self.inv_index.url_to_doc_id[url]
         
         try:
             fields = {}
@@ -254,12 +284,8 @@ class Indexer:
             self.file_ptr.file_idx += 1
 
             if batch_size > 0 and dirty_count >= batch_size:
-                self.inv_index.save_index_pkl(self.tmp_indexes_path, self.file_ptr.batch_counter)
+                self.inv_index.save_index(Path(f"{self.tmp_indexes_path}/inverted_index_{str(self.file_ptr.batch_counter)}.idx"))
                 self.file_ptr.save_pointer()
-                if self.debug:
-                    file_path: Path = self.tmp_indexes_path / f"tmp_index_{self.file_ptr.batch_counter}.txt"
-                    self.inv_index.display(file_path)
-                    logger.debug(f"Inverted index saved to: {file_path}")
                 
                 # CLEARS INDEX FROM RAM
                 self.reset_index()
@@ -268,7 +294,7 @@ class Indexer:
                 self.file_ptr.batch_counter += 1
 
         logger.info("Final save after all files processed...")
-        self.inv_index.save_index_pkl(self.tmp_indexes_path, self.file_ptr.batch_counter)
+        self.inv_index.save_index(Path(f"{self.tmp_indexes_path}/inverted_index_{str(self.file_ptr.batch_counter)}.idx"))
 
         logger.info("All files processed successfully.")
 
@@ -278,85 +304,49 @@ class Indexer:
             logger.error(error_message)
             raise FileNotFoundError(error_message)
         
-        pkl_files = sorted(Path(const.TMP_DIR).rglob(f"{const.INDEX_FILENAME}_*.pkl"))
+        tmp_index_files = sorted(self.tmp_indexes_path.rglob("*.idx"))
 
-        if not pkl_files:
-            logger.warning("No PKL files found to merge.")
+        if not tmp_index_files:
+            logger.warning("No index files found to merge.")
             return
 
-        # Start with the first file
-        main_file = pkl_files[0]
-        with open(main_file, 'rb') as f:
-            main_index: InvertedIndex = pickle.load(f)
+        temp_count = 0
 
-        for other_file in pkl_files[1:]:
-            with open(other_file, 'rb') as f:
-                other_index: InvertedIndex = pickle.load(f)
+        while len(tmp_index_files) > 1:
+            seg_a = tmp_index_files.pop(0)
+            seg_b = tmp_index_files.pop(0)
 
-            # Merge index_dict
-            for term, postings in other_index.index_dict.items():
-                main_index.index_dict[term].extend(copy.deepcopy(postings))
+            merged_index: InvertedIndex = InvertedIndex()
 
-            # Merge doc_id mappings (assuming no ID collisions)
-            main_index.doc_id_to_url.update(other_index.doc_id_to_url)
-            main_index.url_to_doc_id.update(other_index.url_to_doc_id)
+            for segment_file in [seg_a, seg_b]:
+                segment_index = load_index_from_mmap(segment_file)
+                for term, postings in segment_index.index_dict.items():
+                    merged_index.index_dict[term].extend(postings)
+                merged_index.doc_id_to_url.update(segment_index.doc_id_to_url)
 
-        for term, postings in main_index.index_dict.items():
-            postings.sort(key=lambda x: x[0])
+                del segment_index
+                gc.collect()
 
-        # Save merged index back
-        merged_file = self.index_path / f"main_{const.INDEX_FILENAME}.pkl"
-        with open(merged_file, "wb") as f:
-            pickle.dump(main_index, f)
 
-        meta: dict = main_index.get_analytics()
-        meta_file: str = f"{self.index_path}/{const.META_FILENAME}.pkl"
+            for term, postings in merged_index.index_dict.items():
+                postings.sort(key=lambda x: x[0])
 
-        with open(meta_file, "wb") as f:
-            pickle.dump(meta, f)
+            merged_file = self.tmp_indexes_path / f"tmp_merged_{temp_count}.idx"
+            merged_index.save_index(merged_file)
+            
+            del merged_index
+            gc.collect()
 
-        logger.info(f"Merged index saved to {merged_file}")
+            tmp_index_files.append(merged_file)
+            tmp_index_files = sorted(tmp_index_files)
+            temp_count += 1
 
-    def split_index_by_letter(self):
-        """
-        Split a merged inverted index into multiple smaller indices
-        according to SUB_INDEX_MAPPING.
-        """
-        from utils.constants import SUB_INDEX_MAPPING  # make sure it's imported
+        final_file = tmp_index_files[0]
+        final_index = load_index_from_mmap(final_file)
 
-        main_file = self.index_path / f"main_{const.INDEX_FILENAME}.pkl"
-        if not is_valid_file(main_file):
-            raise FileNotFoundError(f"Main index file missing: {main_file}")
-
-        # Load main merged index
-        with open(main_file, 'rb') as f:
-            main_index: InvertedIndex = pickle.load(f)
-
-        # Ensure index directory exists
-        self.index_path.mkdir(parents=True, exist_ok=True)
-
-        # Prepare sub-index containers for each mapped file
-        split_indices: Dict[str, InvertedIndex] = {}
-        for file_name in set(SUB_INDEX_MAPPING.values()):
-            split_indices[file_name] = InvertedIndex()
-
-        # Assign terms to sub-indexes based on mapping
-        for term, postings in main_index.index_dict.items():
-            first_char = term[0].lower()
-            sub_index_file = SUB_INDEX_MAPPING[first_char]
-            split_indices[sub_index_file].index_dict[term] = copy.deepcopy(postings)
-
-        # Copy doc_id mappings to each section
-        for sub_index in split_indices.values():
-            sub_index.doc_id_to_url = main_index.doc_id_to_url.copy()
-            sub_index.url_to_doc_id = main_index.url_to_doc_id.copy()
-
-        # Save each sub-index
-        for file_name, index in split_indices.items():
-            out_file = self.index_path / file_name
-            with open(out_file, 'wb') as f:
-                pickle.dump(index, f)
-            print(f"Saved sub-index -> {out_file}")
+        final_index_file = self.index_path / "main_inverted_index.idx"
+        final_index.save_index(final_index_file)
+        logger.info(f"Merged index saved to {final_index_file}")
 
     def display_report(self, report_output_file: str | None = None) -> None:
         """

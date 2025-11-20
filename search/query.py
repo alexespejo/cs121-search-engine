@@ -21,12 +21,12 @@ class Query:
     
     def parse_query(self) -> list[str]:
         split_list = self.original_str.split(" ")
-        filtered_list = []
+        filtered_list = set()
         for element in split_list:
             if not is_valid(element):
                 # @TODO decide what to do with invalid query terms, currently ignoring them.
                 pass
             else:
-                filtered_list.append(element.lower())
+                filtered_list.add(element.lower())
 
-        return filtered_list
+        return list(filtered_list)
