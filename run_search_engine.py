@@ -39,6 +39,7 @@ if __name__ == '__main__':
             
             time_diff_ns = perf_counter_ns() - before
             time_diff_ms: float = time_diff_ns / const.NS_TO_MS
+            logger.info(f"TIME TO COMPLETE SEARCH: {time_diff_ms:.2f}ms")
             print(f"\nTIME TO COMPLETE SEARCH: {time_diff_ms:.2f}ms")
     except EOFError as e:
         print("\nEOF found, exiting...")

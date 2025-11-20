@@ -6,6 +6,7 @@ from utils.file_io import is_valid_file
 
 from pathlib import Path
 from logging import getLogger
+from time import perf_counter_ns
 
 if __name__ == '__main__':
     # Parse args
@@ -31,6 +32,14 @@ if __name__ == '__main__':
     indexer.debug = args.debug
     if not args.keep:
         indexer.delete_index()
+
+    before = perf_counter_ns()
+    
     indexer.run()
+
+    time_diff_ns = perf_counter_ns() - before
+    time_diff_ms: float = time_diff_ns / const.NS_TO_MS
+    logger.info(f"TIME TO COMPLETE INDEXING: {time_diff_ms:.2f}ms")
+
     # indexer.split_index_by_letter() # DEPRECATED
     indexer.display_report()
