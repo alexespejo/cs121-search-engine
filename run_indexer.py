@@ -42,6 +42,3 @@ if __name__ == '__main__':
     minutes = int((time_diff_ns % 3600) // 60)
     seconds = time_diff_ns % 60    
     logger.info(f"TIME TO COMPLETE INDEXING: {hours}:{minutes}:{seconds}")
-
-    # indexer.split_index_by_letter() # DEPRECATED
-    indexer.display_report()
