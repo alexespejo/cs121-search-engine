@@ -39,6 +39,7 @@ class SearchEngine:
             return results[:top]
 
     def display_results(self, result_url_list: list[str]):
+        print()
         print("=" * 70)
         print(f"Search Results for query: \"{self.query}\"")
         print("=" * 70)

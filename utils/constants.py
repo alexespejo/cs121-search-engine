@@ -1,7 +1,7 @@
 from logging import DEBUG, INFO, WARNING, ERROR
 from struct import Struct
 
-BATCH_SIZE_DEFAULT = 15_000
+BATCH_SIZE_DEFAULT = 1 # 15_000
 
 DATA_DIR_DEFAULT = "data/DEV"
 INDEX_DIR_DEFAULT = "index"
