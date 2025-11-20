@@ -17,3 +17,4 @@ find_file.py
 /utils/__pycache__
 log
 file_list.pkl
+*.result
