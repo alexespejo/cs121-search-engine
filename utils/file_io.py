@@ -6,6 +6,35 @@ import pickle
 
 import utils.constants as const
 
+import logging
+
+logger = logging.getLogger(__name__)
+
+def get_json_file_list(data_dir_str: str) -> list[Path]:
+    """Return list of all JSON files in a directory."""
+    data_path: Path = Path(data_dir_str)
+    if (not is_valid_dir(data_path)):
+        error_message: str = f"Data directory {data_path} is invalid"
+        logger.error(error_message)
+        raise FileNotFoundError(error_message)
+    file_list = sorted([p for p in data_path.rglob("*.json") if p.is_file()])
+    return file_list
+
+def save_file_list(file_list: list[Path]):
+    with open("file_list.pkl", "wb") as f:
+        pickle.dump(file_list, f)
+
+def load_file_list(file_list_str: str) -> list[Path]:
+    file_list_path = Path(file_list_str)
+    if (not is_valid_file(file_list_path)):
+        error_message: str = f"File list path: {file_list_path} is invalid"
+        logger.error(error_message)
+        raise FileNotFoundError(error_message)
+    
+    with open(file_list_path, "rb") as f:
+        file_list: list[Path] = pickle.load(f)
+        return file_list
+
 class FilePointer:
     def __init__(self, file_idx: int = 0, batch_counter: int = 0):
         self.file_idx: int = file_idx

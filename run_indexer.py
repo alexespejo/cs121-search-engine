@@ -1,7 +1,7 @@
 import utils.constants as const
 from utils.args import create_parser_indexer
 from utils.log_setup import setup_logging
-from indexer.indexer import Indexer, get_file_list, load_file_list, save_file_list
+from indexer.indexer import Indexer, get_json_file_list, load_file_list, save_file_list
 from utils.file_io import is_valid_file
 
 from pathlib import Path
@@ -32,13 +32,16 @@ if __name__ == '__main__':
     indexer.debug = args.debug
     if not args.keep:
         indexer.delete_index()
-
+    print("Starting indexing...")
     before = perf_counter_ns()
-    
     indexer.run()
-
     time_diff_ns = perf_counter_ns() - before
+    print("Indexing complete")
+
     hours = int(time_diff_ns // 3600)
     minutes = int((time_diff_ns % 3600) // 60)
     seconds = time_diff_ns % 60    
-    logger.info(f"TIME TO COMPLETE INDEXING: {hours}:{minutes}:{seconds}")
+    logger.info(f"indexing time: {hours}:{minutes}:{seconds}")
+    print(f"indexing time: {hours}:{minutes}:{seconds}")
+    
+    indexer.display_report()

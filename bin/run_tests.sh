@@ -15,11 +15,11 @@ fi
 
 if [[ "$1" == "-i" ]]; then
     shift
-    tmux send-keys -t "$SESSION_NAME" "python3 run_indexer.py" C-m
+    tmux send-keys -t "$SESSION_NAME" "python3 run_indexer.py > tests/indexer.result" C-m
 fi
 
 for test in "$@"; do
-    tmux send-keys -t "$SESSION_NAME" "python3 run_search_engine.py < tests/$test.txt &> tests/$test.result" C-m
+    tmux send-keys -t "$SESSION_NAME" "python3 run_search_engine.py < tests/$test.txt > tests/$test.result" C-m
 done
 
 tmux attach -t "$SESSION_NAME"

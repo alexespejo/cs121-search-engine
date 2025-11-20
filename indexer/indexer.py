@@ -6,38 +6,14 @@ import pickle
 from pathlib import Path
 from typing import Dict, List, Tuple, Union
 from urllib.parse import urlparse
+from nltk.probability import FreqDist
 
 import utils.constants as const
-from utils.text_processing import extract_fields_html, tokenize_fields
-from utils.file_io import is_valid_dir, is_valid_file, get_dir_size, rm_dir, FilePointer
-from indexer.inverted_index import InvertedIndex, open_mmap, load_index_from_mmap
+from utils.text_processing import extract_fields_html, tokenize_fields, calculate_postings
+from utils.file_io import is_valid_dir, is_valid_file, get_dir_size, rm_dir, FilePointer, load_file_list, get_json_file_list, save_file_list
+from indexer.inverted_index import InvertedIndex, Posting, open_mmap, load_index_from_mmap
 
 logger = logging.getLogger(__name__)
-
-def get_file_list(data_dir_str: str) -> list[Path]:
-    """Return list of all JSON files in a directory."""
-    data_path: Path = Path(data_dir_str)
-    if (not is_valid_dir(data_path)):
-        error_message: str = f"Data directory {data_path} is invalid"
-        logger.error(error_message)
-        raise FileNotFoundError(error_message)
-    file_list = sorted([p for p in data_path.rglob("*.json") if p.is_file()])
-    return file_list
-
-def save_file_list(file_list: list[Path]):
-    with open("file_list.pkl", "wb") as f:
-        pickle.dump(file_list, f)
-
-def load_file_list(file_list_str: str) -> list[Path]:
-    file_list_path = Path(file_list_str)
-    if (not is_valid_file(file_list_path)):
-        error_message: str = f"File list path: {file_list_path} is invalid"
-        logger.error(error_message)
-        raise FileNotFoundError(error_message)
-    
-    with open(file_list_path, "rb") as f:
-        file_list: list[Path] = pickle.load(f)
-        return file_list
     
 class Indexer:
     def __init__(self, data_dir_str: str = const.DATA_DIR_DEFAULT, index_dir_str: str = const.INDEX_DIR_DEFAULT, batch_size: int = 0):
@@ -98,11 +74,11 @@ class Indexer:
         self.next_doc_id: int = 0
         self.batch_size: int = batch_size
 
-        file_list_path = Path(const.FILE_LIST_FILENAME)
+        file_list_path = Path(f"{const.FILE_LIST_FILENAME}.pkl")
         if is_valid_file(file_list_path):
-            self.file_list: list[Path] = load_file_list(const.FILE_LIST_FILENAME)
+            self.file_list: list[Path] = load_file_list(f"{const.FILE_LIST_FILENAME}.pkl")
         else:
-            self.file_list: list[Path] = get_file_list(str(self.data_path))
+            self.file_list: list[Path] = get_json_file_list(str(self.data_path))
             save_file_list(self.file_list)
 
         logger.info("Variables initialized")
@@ -137,6 +113,11 @@ class Indexer:
         gc.collect()
         self.inv_index = InvertedIndex()
 
+    def get_next_doc_id(self):
+        doc_id = self.next_doc_id
+        self.next_doc_id += 1
+        return doc_id
+
     def index_document(self, url: str, content: str, reuse_doc_id: bool = False) -> None:
         """
         Process a document and add it to the index.
@@ -153,31 +134,33 @@ class Indexer:
         if reuse_doc_id:
             doc_id = next((key for key, value in self.inv_index.doc_id_to_url.items() if value == url), None)
             if doc_id is None:
-                doc_id = self.next_doc_id
-                self.next_doc_id += 1
-                self.inv_index.doc_id_to_url[doc_id] = url # map doc_id to url
-
+                doc_id = self.get_next_doc_id()
         else:
-            doc_id = self.next_doc_id
-            self.next_doc_id += 1
-            self.inv_index.doc_id_to_url[doc_id] = url # map doc_id to url
+            doc_id = self.get_next_doc_id()
         
+        self.inv_index.doc_id_to_url[doc_id] = url
+        
+        # extract the fields
         try:
-            fields = {}
-            fields: dict[str, Union[str, List[str], List[tuple]]] = extract_fields_html(content)
+            fields: dict[str, list[str]] = extract_fields_html(content)
         except Exception as e:
             logger.warning(f"Failed to extract fields from {url}: {e}")
             return
 
         # tokenize the fields
         try:
-            term_frequencies, word_total = tokenize_fields(fields)
+            word_freq_dist, important_words_set = tokenize_fields(fields)
+
+            postings: dict[str, Posting] = calculate_postings(doc_id, 
+                                                              word_freq_dist, 
+                                                              important_words_set)
         except Exception as e:
             logger.warning(f"Failed to tokenize {url}: {e}")
             return
-        # add the term frequencies to the index
-        for term, frequency in term_frequencies.items():
-            self.inv_index.add_entry(term, doc_id, float(frequency) / float(word_total))
+        
+        # add the postings to the index
+        for term, posting in postings.items():
+            self.inv_index.add_posting(term, posting)
 
     def is_file_skippable(self, url: str) -> Tuple[bool, str]:
         """
@@ -283,7 +266,7 @@ class Indexer:
             self.file_ptr.file_idx += 1
 
             if batch_size > 0 and dirty_count >= batch_size:
-                self.inv_index.save_index(Path(f"{self.tmp_indexes_path}/inverted_index_{str(self.file_ptr.batch_counter)}.idx"))
+                self.inv_index.save_index(Path(f"{self.tmp_indexes_path}/inverted_index_{str(self.file_ptr.batch_counter)}.nidx"))
                 self.file_ptr.save_pointer()
                 
                 # CLEARS INDEX FROM RAM
@@ -294,7 +277,7 @@ class Indexer:
             logger.info(f"File {self.file_ptr.file_idx} / {file_list_len} processed")
 
         logger.info("Final save after all files processed...")
-        self.inv_index.save_index(Path(f"{self.tmp_indexes_path}/inverted_index_{str(self.file_ptr.batch_counter)}.idx"))
+        self.inv_index.save_index(Path(f"{self.tmp_indexes_path}/inverted_index_{str(self.file_ptr.batch_counter)}.nidx"))
 
         logger.info("All files processed successfully")
 
@@ -304,7 +287,7 @@ class Indexer:
             logger.error(error_message)
             raise FileNotFoundError(error_message)
         
-        tmp_index_files = sorted(self.tmp_indexes_path.rglob("*.idx"))
+        tmp_index_files = sorted(self.tmp_indexes_path.rglob("*.nidx"))
 
         if not tmp_index_files:
             logger.warning("No index files found to merge.")
@@ -329,9 +312,9 @@ class Indexer:
 
 
             for term, postings in merged_index.index_dict.items():
-                postings.sort(key=lambda x: x[0])
+                postings.sort(key=lambda x: x.doc_id)
 
-            merged_file = self.tmp_indexes_path / f"tmp_merged_{temp_count}.idx"
+            merged_file = self.tmp_indexes_path / f"tmp_merged_{temp_count}.nidx"
             merged_index.save_index(merged_file)
             
             del merged_index
@@ -344,7 +327,7 @@ class Indexer:
         final_file = tmp_index_files[0]
         final_index = load_index_from_mmap(final_file)
 
-        final_index_file = self.index_path / "main_inverted_index.idx"
+        final_index_file = self.index_path / f"main_{const.INDEX_FILENAME}.nidx"
         final_index.save_index(final_index_file)
         logger.info(f"Merged index saved to {final_index_file}")
 
@@ -362,6 +345,7 @@ class Indexer:
             raise IOError(error_message)
 
         logger.info("Displaying report...")
+        self.inv_index = load_index_from_mmap(self.index_path / f"main_{const.INDEX_FILENAME}.nidx")
         analytics = self.inv_index.get_analytics()
         index_size_kb = get_dir_size(self.index_path, unit="KB")
 
