@@ -1,6 +1,17 @@
 from logging import DEBUG, INFO, WARNING, ERROR
 from struct import Struct
 
+BATCH_SIZE_DEFAULT = 15_000
+
+DATA_DIR_DEFAULT = "data/DEV"
+INDEX_DIR_DEFAULT = "index"
+DEBUG_INDEX_DIR_DEFAULT = "index_debug"
+TMP_DIR = "index_tmp"
+LOG_DIR = "log"
+
+FILE_LIST_FILENAME = "file_list.pkl"
+INDEX_FILENAME = "inverted_index"
+
 HEADER_STRUCT = Struct("<4sIQQ")   # magic, version, index_dict_off, url_map_offset
 TERM_LEN_STRUCT = Struct("<H")
 POSTING_COUNT_STRUCT = Struct("<I")
@@ -13,18 +24,7 @@ BYTES_TO_MB = 1024**2
 BYTES_TO_GB = 1024**3
 BYTES_TO_TB = 1024**4
 
-DATA_DIR_DEFAULT = "data/DEV"
-INDEX_DIR_DEFAULT = "index"
-DEBUG_INDEX_DIR_DEFAULT = "index_debug"
-TMP_DIR = "index_tmp"
-META_FILENAME = "meta"
-FILE_LIST_FILENAME = "file_list.pkl"
-INDEX_FILENAME = "inverted_index"
-
 TOP_RESULTS_DEFAULT = 5
-BATCH_SIZE_DEFAULT = 10 # 15_000
-
-LOG_DIR = "log"
 
 LOG_LEVELS = {
     "debug": DEBUG,

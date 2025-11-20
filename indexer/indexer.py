@@ -105,8 +105,6 @@ class Indexer:
             self.file_list: list[Path] = get_file_list(str(self.data_path))
             save_file_list(self.file_list)
 
-        logger.warning("File list is empty")
-
         logger.info("Variables initialized")
 
     def run(self) -> None:
@@ -279,6 +277,7 @@ class Indexer:
 
         dirty_count = 0
         while self.file_ptr.file_idx < file_list_len:
+            logger.info(f"Processing file {self.file_ptr.file_idx} / {file_list_len}...")
             self.process_file(self.file_list[self.file_ptr.file_idx], reuse_doc_id=False)
             dirty_count += 1
             self.file_ptr.file_idx += 1
@@ -292,11 +291,12 @@ class Indexer:
 
                 dirty_count = 0
                 self.file_ptr.batch_counter += 1
+            logger.info(f"File {self.file_ptr.file_idx} / {file_list_len} processed")
 
         logger.info("Final save after all files processed...")
         self.inv_index.save_index(Path(f"{self.tmp_indexes_path}/inverted_index_{str(self.file_ptr.batch_counter)}.idx"))
 
-        logger.info("All files processed successfully.")
+        logger.info("All files processed successfully")
 
     def merge_indexes(self):
         if not is_valid_dir(self.index_path):

@@ -14,6 +14,8 @@ else
 fi
 
 tmux send-keys -t "$SESSION_NAME" "python3 run_indexer.py" C-m
-tmux send-keys -t "$SESSION_NAME" "python3 run_search_engine.py" C-m
+for test in "$@"; do
+    tmux send-keys -t "$SESSION_NAME" "python3 run_search_engine.py < tests/$test.txt &> tests/$test.result" C-m
+done
 
 tmux attach -t "$SESSION_NAME"
