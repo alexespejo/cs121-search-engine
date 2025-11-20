@@ -38,8 +38,10 @@ if __name__ == '__main__':
     indexer.run()
 
     time_diff_ns = perf_counter_ns() - before
-    time_diff_ms: float = time_diff_ns / const.NS_TO_MS
-    logger.info(f"TIME TO COMPLETE INDEXING: {time_diff_ms:.2f}ms")
+    hours = int(time_diff_ns // 3600)
+    minutes = int((time_diff_ns % 3600) // 60)
+    seconds = time_diff_ns % 60    
+    logger.info(f"TIME TO COMPLETE INDEXING: {hours}:{minutes}:{seconds}")
 
     # indexer.split_index_by_letter() # DEPRECATED
     indexer.display_report()
