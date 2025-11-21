@@ -7,4 +7,5 @@ rm -rf utils/__pycache__
 rm -rf file_list.pkl
 rm -rf index
 rm -rf log
+rm -rf tests/*.result
 exit 0
