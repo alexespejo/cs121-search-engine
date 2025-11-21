@@ -11,14 +11,9 @@
 The dataset must be in the format:
 ```text
 data
-└───dir1
-|   └───*.json
-└───dir2
-|   └───*.json
-└───dir3
-|   └───*.json
-|
+└─── *.json
 ...
 ```
 ### Search Engine
-- 
+- accepts a query
+- returns top 5 results
