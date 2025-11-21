@@ -312,7 +312,7 @@ class Indexer:
 
 
             for term, postings in merged_index.index_dict.items():
-                postings.sort(key=lambda x: x.doc_id)
+                postings.sort()
 
             merged_file = self.tmp_indexes_path / f"tmp_merged_{temp_count}.nidx"
             merged_index.save_index(merged_file)
@@ -363,7 +363,6 @@ class Indexer:
             line("Number of indexed documents", analytics["num_documents"]),
             line("Number of unique tokens", analytics["num_unique_tokens"]),
             line("Total postings", analytics["total_postings"]),
-            line("Total token occurrences", analytics["total_token_occurrences"]),
             line("Average postings per token", f"{analytics['avg_postings_per_token']:.2f}"),
             line("Median postings per token", analytics["median_postings_per_token"]),
             line("Max postings per token", analytics["max_postings_per_token"]),

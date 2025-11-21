@@ -41,9 +41,9 @@ def create_parser_indexer() -> ArgumentParser:
     )
 
     parser.add_argument(
-        "-k", "--keep",
+        "-r", "--reset",
         action="store_true",
-        help="Disable reset of index before program start."
+        help="Enable reset of index before program start."
     )
 
     return parser

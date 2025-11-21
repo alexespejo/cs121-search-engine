@@ -12,11 +12,13 @@ from logging import getLogger
 
 logger = getLogger(__name__)
 
-@dataclass
 class Posting:
-    doc_id: int
-    term_frequency: float
-    importance: float
+    def __init__(self, doc_id: int, term_frequency: float, importance: float):
+        self.doc_id: int = doc_id
+        self.term_frequency: float = term_frequency
+        self.importance: float = importance
+    def __lt__(self, other: "Posting"):
+        return self.doc_id < other.doc_id
 
 def validate_magic_num(magic):
     if magic != b"NIDX":
@@ -133,7 +135,8 @@ def load_index_from_mmap(segment_file: Path) -> "InvertedIndex":
 
             postings = []
             for i in range(p_len):
-                postings.append(struct.unpack_from(const.POSTING_FMT, mm, ptr + (i * const.POSTING_SIZE)))
+                doc_id, tf, importance = struct.unpack_from(const.POSTING_FMT, mm, ptr + (i * const.POSTING_SIZE))
+                postings.append(Posting(doc_id, tf, importance))
             ptr += p_len * const.POSTING_SIZE
 
             index.index_dict[term].extend(postings)
@@ -184,7 +187,7 @@ class InvertedIndex:
             f.write(struct.pack(const.INDEX_DICT_LEN_FMT, len(self.index_dict)))
 
             for term in sorted(self.index_dict):
-                postings = self.index_dict[term]
+                postings: list[Posting] = self.index_dict[term]
 
                 term_b = term.encode()
                 f.write(struct.pack(const.TERM_LEN_FMT, len(term_b)))

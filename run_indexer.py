@@ -30,7 +30,7 @@ if __name__ == '__main__':
     # Run indexer
     indexer = Indexer(data_dir, index_dir, args.batch_size)
     indexer.debug = args.debug
-    if not args.keep:
+    if args.reset:
         indexer.delete_index()
     print("Starting indexing...")
     before = perf_counter_ns()
@@ -38,9 +38,9 @@ if __name__ == '__main__':
     time_diff_ns = perf_counter_ns() - before
     print("Indexing complete")
 
-    hours = int(time_diff_ns // 3600)
-    minutes = int((time_diff_ns % 3600) // 60)
-    seconds = time_diff_ns % 60    
+    hours = int(time_diff_ns // 3.6e12)
+    minutes = int((time_diff_ns % 3.6e12) // 6e10)
+    seconds = time_diff_ns % 6e10    
     logger.info(f"indexing time: {hours}:{minutes}:{seconds}")
     print(f"indexing time: {hours}:{minutes}:{seconds}")
     
