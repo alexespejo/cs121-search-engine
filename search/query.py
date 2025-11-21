@@ -1,3 +1,6 @@
+from nltk.tokenize import word_tokenize
+from nltk.stem import PorterStemmer
+
 from enum import Enum
 import string
 
@@ -20,13 +23,6 @@ class Query:
         return self.original_str
     
     def parse_query(self) -> list[str]:
-        split_list = self.original_str.split(" ")
-        filtered_list = set()
-        for element in split_list:
-            if not is_valid(element):
-                # @TODO decide what to do with invalid query terms, currently ignoring them.
-                pass
-            else:
-                filtered_list.add(element.lower())
-
-        return list(filtered_list)
+        stemmer = PorterStemmer()
+        return [stemmer.stem(word.lower(), to_lowercase=True) for word in word_tokenize(self.original_str)]
+    
