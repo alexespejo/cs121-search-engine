@@ -85,6 +85,28 @@ class InvertedIndex:
 
         logger.info(f"Index {batch_num} saved to {index_file}")
     
+    def get_document_count(inv_index_path: Path) -> int:
+        """
+        Gets the total number of documents in the index.
+        Returns the count from the document-to-URL mapping section.
+        """
+        f, mm = open_mmap(inv_index_path)
+
+        try:
+            magic, _, _, url_offset = const.HEADER_STRUCT.unpack_from(mm, 0)
+            if magic != b"MYDB":
+                error_message : str = "Incorrect Magic Number, likely incorrect file."
+                logger.error(error_message)
+                raise IOError(error_message)
+            
+            ptr = url_offset
+            url_count = struct.unpack_from("<I", mm, ptr)[0]
+            return url_count if url_count > 0 else 1
+
+        finally:
+            mm.close()
+            f.close()
+    
     # DO NOT USE
     def load_index_pkl(self, index_path: Path) -> None:
         """Load index from disk"""

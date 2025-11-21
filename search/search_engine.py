@@ -2,6 +2,7 @@ from indexer.inverted_index import InvertedIndex
 from query import Query, QueryType
 import utils.constants as const
 from utils.file_io import is_valid_file
+from indexer.inverted_index import get_posting, get_url, get_document_count
 
 import pickle
 import bisect
@@ -29,18 +30,64 @@ class SearchEngine:
         self.query = Query(query_str)
 
     def boolean_query(self) -> list[tuple[str, float]]:
-        results = []
+        """
+        Performs a boolean AND query on the inverted index.
+        Returns documents containing ALL query terms, ranked by TF-IDF score.
+        """
+        if not self.query.parsed_query:
+            logger.warning("Empty query provided")
+            return []
+        
+        # get postings
+        term_postings: dict[str, list[tuple[int, float]]] = {}
         for term in self.query.parsed_query:
-            word_key: str = term[0]
-            with open(const.SUB_INDEX_MAPPING[word_key], "rb") as f:
-                inv_index: InvertedIndex = pickle.load(f)
-                num_docs_contain: int = len(inv_index.index_dict.get(term, [0]))
-                postings = inv_index.index_dict.get(term, [])
-                for doc_id, tf in postings:
-                    idf: float = log(float(self.meta["num_documents"]) / float(num_docs_contain)) # idf of a word
-                    tf_idf_score: float = float(tf * idf)
-                    results.append((inv_index.doc_id_to_url.get(doc_id), tf_idf_score))
-        return sorted(results)
+            postings = get_posting(self.index_file, term)
+            if not postings:
+                logger.info(f"Term '{term}' not found in index")
+                return []
+            term_postings[term] = postings
+        
+        doc_id_sets = []
+        for term, postings in term_postings.items():
+            doc_id_set = {doc_id for doc_id, _ in postings}
+            doc_id_sets.append(doc_id_set)
+        
+        # query intersection
+        common_doc_ids = set.intersection(*doc_id_sets)
+        
+        if not common_doc_ids:
+            logger.info("No documents contain all query terms")
+            return []
+        
+        # tf-idf
+        total_docs = get_document_count(self.index_file)
+      
+        term_idf: dict[str, float] = {}
+        for term, postings in term_postings.items():
+            df = len(postings)  # document frequency
+            idf = log(total_docs / df) if df > 0 else 0
+            term_idf[term] = idf
+        
+        doc_scores: dict[int, float] = {}
+        for doc_id in common_doc_ids:
+            score = 0.0
+            for term, postings in term_postings.items():
+                tf = next((freq for did, freq in postings if did == doc_id), 0)
+                idf = term_idf[term]
+                score += tf * idf
+            doc_scores[doc_id] = score
+        
+        sorted_docs = sorted(doc_scores.items(), key=lambda x: x[1], reverse=True)[:5]
+        
+        results: list[tuple[str, float]] = []
+        for doc_id, score in sorted_docs:
+            url = get_url(self.index_file, doc_id)
+            if url:
+                results.append((url, score))
+            else:
+                logger.warning(f"Could not find URL for doc_id {doc_id}")
+        
+        return results
 
     def get_search_results(self, type: QueryType = QueryType.boolean, top: int = const.TOP_RESULTS_DEFAULT) -> list[str]:
         results_and_score: list[tuple[str, float]] = []
