@@ -115,15 +115,13 @@ def get_document_count(inv_index_path: Path) -> int:
     f, mm = open_mmap(inv_index_path)
 
     try:
-        magic, _, _, url_offset = const.HEADER_STRUCT.unpack_from(mm, 0)
-        if magic != b"MYDB":
-            error_message : str = "Incorrect Magic Number, likely incorrect file."
-            logger.error(error_message)
-            raise IOError(error_message)
+        ptr = 0
+        magic, _, _, doc_id_to_url_offset = struct.unpack_from(const.HEADER_FMT, mm, ptr)
+        validate_magic_num(magic)
         
-        ptr = url_offset
-        url_count = struct.unpack_from("<I", mm, ptr)[0]
-        return url_count if url_count > 0 else 1
+        ptr = doc_id_to_url_offset
+        url_dict_len = struct.unpack_from(const.URL_DICT_LEN_FMT, mm, ptr)[0]
+        return url_dict_len if url_dict_len > 0 else 1
 
     finally:
         mm.close()
@@ -264,7 +262,7 @@ class InvertedIndex:
             ),
         }
 
-    def display(self, file_name = None) -> None:
+    def display(self, file_name: str | None = None) -> None:
         lines = [
             "",
             "=" * 70,

@@ -1,6 +1,6 @@
 from search.query import Query, QueryType
 import utils.constants as const
-from indexer.inverted_index import get_posting, get_url, get_document_count
+from indexer.inverted_index import Posting, get_postings, get_url, get_document_count
 
 from pathlib import Path
 from logging import getLogger
@@ -29,9 +29,9 @@ class SearchEngine:
             return []
         
         # get postings
-        term_postings: dict[str, list[tuple[int, float]]] = {}
+        term_postings: dict[str, list[Posting]] = {}
         for term in self.query.parsed_query:
-            postings = get_posting(self.index_file, term)
+            postings = get_postings(self.index_file, term)
             if not postings:
                 logger.info(f"Term '{term}' not found in index")
                 return []
@@ -39,7 +39,7 @@ class SearchEngine:
         
         doc_id_sets = []
         for term, postings in term_postings.items():
-            doc_id_set = {doc_id for doc_id, _ in postings}
+            doc_id_set = {posting.doc_id for posting in postings}
             doc_id_sets.append(doc_id_set)
         
         # query intersection
@@ -62,7 +62,7 @@ class SearchEngine:
         for doc_id in common_doc_ids:
             score = 0.0
             for term, postings in term_postings.items():
-                tf = next((freq for did, freq in postings if did == doc_id), 0)
+                tf = next((posting.term_frequency for posting in postings if posting.doc_id == doc_id), 0)
                 idf = term_idf[term]
                 score += tf * idf
             doc_scores[doc_id] = score

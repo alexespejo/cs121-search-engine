@@ -46,7 +46,8 @@ def tokenize_fields(fields: dict[str, list[str]]) -> tuple[FreqDist, set[str]]:
     
     stemmer = PorterStemmer()
     word_freq_dist = FreqDist(stemmer.stem(word.lower(), to_lowercase=True) 
-                              for word in word_tokenize(combined_text_str) if word.isalnum())    
+                              for word in word_tokenize(combined_text_str) 
+                              if word.isascii() and word.isalnum())    
     
     return word_freq_dist, important_words_set
 
