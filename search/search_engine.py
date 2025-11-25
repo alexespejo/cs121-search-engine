@@ -5,7 +5,6 @@ from indexer.inverted_index import Posting, get_postings, get_url, get_document_
 from pathlib import Path
 from logging import getLogger
 from math import log
-from collections import defaultdict
 
 logger = getLogger(__name__)
 

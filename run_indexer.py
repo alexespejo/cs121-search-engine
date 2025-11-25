@@ -1,10 +1,8 @@
 import utils.constants as const
 from utils.args import create_parser_indexer
 from utils.log_setup import setup_logging
-from indexer.indexer import Indexer, get_json_file_list, load_file_list, save_file_list
-from utils.file_io import is_valid_file
+from indexer.indexer import Indexer
 
-from pathlib import Path
 from logging import getLogger
 from time import perf_counter_ns
 
@@ -23,7 +21,7 @@ if __name__ == '__main__':
     if args.debug:
         index_dir = const.DEBUG_INDEX_DIR_DEFAULT
         logger.setLevel(const.LOG_LEVELS["debug"])
-        logger.debug(f"Debug mode activated")
+        logger.debug("Debug mode activated")
     else:
         index_dir = args.index_directory or const.INDEX_DIR_DEFAULT
 
@@ -40,7 +38,7 @@ if __name__ == '__main__':
 
     hours = int(time_diff_ns // 3.6e12)
     minutes = int((time_diff_ns % 3.6e12) // 6e10)
-    seconds = time_diff_ns % 6e10    
+    seconds = time_diff_ns % 6e10
     logger.info(f"indexing time: {hours}:{minutes}:{seconds}")
     print(f"indexing time: {hours}:{minutes}:{seconds}")
     

@@ -1,19 +1,16 @@
-import json
-import mimetypes
-import logging
-import gc
-import pickle
-from pathlib import Path
-from typing import Dict, List, Tuple, Union
-from urllib.parse import urlparse
-from nltk.probability import FreqDist
-
 import utils.constants as const
 from utils.text_processing import extract_fields_html, tokenize_fields, calculate_postings
-from utils.file_io import is_valid_dir, is_valid_file, get_dir_size, rm_dir, FilePointer, load_file_list, get_json_file_list, save_file_list
-from indexer.inverted_index import InvertedIndex, Posting, open_mmap, load_index_from_mmap
+from utils.file_io import FilePointer, is_valid_dir, is_valid_file, get_dir_size, rm_dir, save_file_list, load_file_list, get_json_file_list
+from indexer.inverted_index import InvertedIndex, Posting, load_index_from_mmap
 
-logger = logging.getLogger(__name__)
+import json
+import mimetypes
+import gc
+from pathlib import Path
+from urllib.parse import urlparse
+from logging import getLogger
+
+logger = getLogger(__name__)
     
 class Indexer:
     def __init__(self, data_dir_str: str = const.DATA_DIR_DEFAULT, index_dir_str: str = const.INDEX_DIR_DEFAULT, batch_size: int = 0):
@@ -162,7 +159,7 @@ class Indexer:
         for term, posting in postings.items():
             self.inv_index.add_posting(term, posting)
 
-    def is_file_skippable(self, url: str) -> Tuple[bool, str]:
+    def is_file_skippable(self, url: str) -> tuple[bool, str]:
         """
         Check if a URL should be skipped based on file extension or content type.
         
@@ -170,7 +167,7 @@ class Indexer:
             url: The URL to check
             
         Returns:
-            Tuple of (should_skip: bool, reason: str)
+            tuple of (should_skip: bool, reason: str)
         """
         try:
             parsed = urlparse(url)
@@ -248,7 +245,7 @@ class Indexer:
             logger.error(error_message)
             raise FileNotFoundError(error_message)
         if not self.file_list:
-            error_message = f"File list not found"
+            error_message = "File list not found"
             logger.error(error_message)
             raise IOError(error_message)
         
@@ -348,6 +345,8 @@ class Indexer:
         self.inv_index = load_index_from_mmap(self.index_path / f"main_{const.INDEX_FILENAME}.nidx")
         analytics = self.inv_index.get_analytics()
         index_size_kb = get_dir_size(self.index_path, unit="KB")
+        index_size_mb = get_dir_size(self.index_path, unit="MB")
+        index_size_gb = get_dir_size(self.index_path, unit="GB")
 
         # Helper for aligned lines
         def line(label: str, value: str | int | float) -> str:
@@ -367,7 +366,7 @@ class Indexer:
             line("Median postings per token", analytics["median_postings_per_token"]),
             line("Max postings per token", analytics["max_postings_per_token"]),
             line("Min postings per token", analytics["min_postings_per_token"]),
-            line("Total size of index on disk (KB)", f"{index_size_kb:.2f}"),
+            line("Total size of index on disk KB | MB | GB", f"{index_size_kb:.2f} | {index_size_mb:.2f} | {index_size_gb:.2f}"),
             "",
             "=" * 70,
         ]

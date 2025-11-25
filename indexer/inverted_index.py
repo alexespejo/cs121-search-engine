@@ -1,9 +1,7 @@
 from utils.file_io import is_valid_file
 import utils.constants as const
 
-from dataclasses import dataclass
 from collections import defaultdict
-from typing import Dict, List
 from pathlib import Path
 import struct
 import mmap
@@ -35,7 +33,7 @@ def open_mmap(inv_index_path: Path):
     mm = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
     return f, mm
 
-def get_postings(inv_index_path: Path, term: str) -> List[Posting]:
+def get_postings(inv_index_path: Path, term: str) -> list[Posting]:
     f, mm = open_mmap(inv_index_path)
     
     try:
@@ -185,8 +183,8 @@ def load_index_from_mmap(segment_file: Path) -> "InvertedIndex":
 
 class InvertedIndex:
     def __init__(self):
-        self.index_dict: Dict[str, List[Posting]] = defaultdict(list)
-        self.doc_id_to_url: Dict[int, str] = {}
+        self.index_dict: dict[str, list[Posting]] = defaultdict(list)
+        self.doc_id_to_url: dict[int, str] = {}
 
     def add_posting(self, term: str, posting: Posting) -> None:
         self.index_dict[term].append(posting)
@@ -239,7 +237,7 @@ class InvertedIndex:
                 offsets["doc_id_to_url"],
             ))
     
-    def get_analytics(self) -> Dict[str, int | float]:
+    def get_analytics(self) -> dict[str, int | float]:
         index = self.index_dict
         doc_map = self.doc_id_to_url
 
@@ -266,7 +264,7 @@ class InvertedIndex:
         lines = [
             "",
             "=" * 70,
-            f"INVERTED INDEX",
+            "INVERTED INDEX",
             "=" * 70,
         ]
         sorted_terms = sorted(self.index_dict.keys())

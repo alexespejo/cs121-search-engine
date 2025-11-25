@@ -2,15 +2,15 @@ import utils.constants as const
 from indexer.inverted_index import Posting
 
 import bs4
-from bs4 import MarkupResemblesLocatorWarning
 import nltk
-nltk.download("punkt")
-nltk.download("punkt_tab")
 from nltk.tokenize import word_tokenize
 from nltk.probability import FreqDist
 from nltk.stem import PorterStemmer
-import warnings
-warnings.filterwarnings("ignore", category=MarkupResemblesLocatorWarning)
+from warnings import filterwarnings
+
+filterwarnings("ignore", category=bs4.MarkupResemblesLocatorWarning)
+nltk.download("punkt")
+nltk.download("punkt_tab")
 
 def calculate_importance(token: str, important_words_set: set[str]) -> float:
     importance_score: float = 0.0

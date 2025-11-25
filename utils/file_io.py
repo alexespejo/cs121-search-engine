@@ -6,9 +6,9 @@ import pickle
 
 import utils.constants as const
 
-import logging
+from logging import getLogger
 
-logger = logging.getLogger(__name__)
+logger = getLogger(__name__)
 
 def get_json_file_list(data_dir_str: str) -> list[Path]:
     """Return list of all JSON files in a directory."""
