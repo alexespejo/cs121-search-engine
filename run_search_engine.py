@@ -6,6 +6,7 @@ from search.query import QueryType
 
 from logging import getLogger
 from time import perf_counter_ns
+import sys
 
 if __name__ == '__main__':
     # Parse args
@@ -26,6 +27,7 @@ if __name__ == '__main__':
         raise ValueError(f"Invalid Argument: {args.num_results}")
     
     search_engine: SearchEngine = SearchEngine(index_dir)
+    search_times: dict[str, float] = {}
 
     # Run search engine
     try:
@@ -40,6 +42,13 @@ if __name__ == '__main__':
             time_diff_ns = perf_counter_ns() - before
             time_diff_ms: float = time_diff_ns / const.NS_TO_MS
             print(f"\nsearch time: {time_diff_ms:.2f}ms")
+            search_times[search_engine.query.original_str] = time_diff_ms
     except EOFError:
         print("\nEOF found, exiting...")
+        for query, time in search_times.items():
+            if time > 300:
+                print(f"Query Timed Out: \"{query}\"", file=sys.stderr)
+            else:
+                print(f"Good job!: \"{query}\"", file=sys.stderr)
+
         exit(0)

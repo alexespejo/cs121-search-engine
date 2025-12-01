@@ -1,11 +1,11 @@
-from utils.file_io import is_valid_file
+from io import BufferedReader
 import utils.constants as const
 
 from collections import defaultdict
 from pathlib import Path
 import struct
-import mmap
 import gc
+import mmap
 from logging import getLogger
 
 logger = getLogger(__name__)
@@ -18,167 +18,156 @@ class Posting:
     def __lt__(self, other: "Posting"):
         return self.doc_id < other.doc_id
 
-def validate_magic_num(magic):
+def validate_magic_num(magic: bytes):
     if magic != b"NIDX":
-        error_message : str = "Incorrect Magic Number, likely incorrect file."
+        error_message : str = f"Incorrect Magic Number, likely incorrect file. {magic.decode()}"
         logger.error(error_message)
         raise IOError(error_message)
 
-def open_mmap(inv_index_path: Path):
-    if not is_valid_file(inv_index_path):
-            error_message = f"index directory invalid / missing {inv_index_path}."
-            logger.error(error_message)
-            raise IOError(error_message)
-    f = open(inv_index_path, "rb")
-    mm = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
-    return f, mm
+def find_term_offset(filename: str, target_term: str) -> int | None:
+    """Performs binary search on the term_offsets file, retrieving the offset for the target term
 
-def get_postings(inv_index_path: Path, term: str) -> list[Posting]:
-    f, mm = open_mmap(inv_index_path)
+    Args:
+        filename (str): file to search
+        target (str): target term
+
+    Returns:
+        int | None: int offset if found, None if not found
+    """
+    with open(filename, "rb") as f:
+        mm = mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ)
+        n = len(mm)
+
+        lo, hi = 0, n - 1
+
+        while lo <= hi:
+            mid = (lo + hi) // 2
+
+            pos = mid
+            while pos > 0 and mm[pos - 1] != ord('\n'):
+                pos -= 1
+
+            end = mm.find(b'\n', pos)
+            if end == -1:
+                end = n
+
+            line = mm[pos:end]
+            if not line:
+                break
+
+            parts = line.split()
+            term = parts[0].decode()
+
+            if term == target_term:
+                return int(parts[1])
+
+            if term < target_term:
+                lo = end + 1
+            else:
+                hi = pos - 1
+
+        return None
+
+def get_postings(f: BufferedReader, term: str) -> list[Posting]:
+    # read header
+    magic, _, _, _ = struct.unpack_from(const.INDEX_HEADER_FMT, f.read(const.INDEX_HEADER_SIZE))
+    validate_magic_num(magic)
     
-    try:
-        # read header
-        ptr = 0
-        magic, _, index_dict_offset, _ = struct.unpack_from(const.HEADER_FMT, mm, ptr)
-        validate_magic_num(magic)
-        ptr = index_dict_offset
-        index_dict_len: int = struct.unpack_from(const.INDEX_DICT_LEN_FMT, mm, ptr)[0]
-        ptr += const.INDEX_DICT_LEN_SIZE
-
-        term_b = term.encode()
-
-        for _ in range(index_dict_len):
-            term_len = struct.unpack_from(const.TERM_LEN_FMT, mm, ptr)[0]
-            ptr += const.TERM_LEN_SIZE
-
-            t_bytes = mm[ptr : ptr + term_len]
-            ptr += term_len
-
-            p_len = struct.unpack_from(const.POSTING_COUNT_FMT, mm, ptr)[0]
-            ptr += const.POSTING_COUNT_SIZE
-
-            if t_bytes == term_b:
-                postings = []
-                for _ in range(p_len):
-                    doc_id, tf, importance = struct.unpack_from(const.POSTING_FMT,mm, ptr)
-                    ptr += const.POSTING_SIZE
-                    postings.append(Posting(doc_id, tf, importance))
-                return postings
-
-            ptr += p_len * const.POSTING_SIZE
-
+    offset = find_term_offset("index/term_offsets.dat", term)
+    if not offset:
+        f.seek(0)
         return []
+    
+    f.seek(offset)
+    term_len = struct.unpack_from(const.TERM_LEN_FMT, f.read(const.TERM_LEN_SIZE))[0]
+    candidate_term = f.read(term_len)
 
-    finally:
-        mm.close()
-        f.close()
+    if candidate_term.decode() == term:
+        postings = []
+        p_len = struct.unpack_from(const.POSTING_COUNT_FMT, f.read(const.POSTING_COUNT_SIZE))[0]
+        for _ in range(p_len):
+            doc_id, tf, importance = struct.unpack_from(const.POSTING_FMT,f.read(const.POSTING_SIZE))
+            postings.append(Posting(doc_id, tf, importance))
+        f.seek(0)
+        return postings
 
-def get_url(inv_index_path: Path, doc_id: int) -> str:
-    f, mm = open_mmap(inv_index_path)
+    f.seek(0)
+    return []
 
-    try:
-        ptr = 0
-        magic, _, _, doc_id_to_url_offset = struct.unpack_from(const.HEADER_FMT, mm, ptr)
-        validate_magic_num(magic)
+def get_url(f: BufferedReader, doc_id: int) -> str:
+    magic, _, _, doc_id_to_url_offset = struct.unpack_from(const.INDEX_HEADER_FMT, f.read(const.INDEX_HEADER_SIZE))
+    validate_magic_num(magic)
+    f.seek(doc_id_to_url_offset)
+
+    doc_count = struct.unpack_from(const.URL_DICT_LEN_FMT, f.read(const.URL_DICT_LEN_SIZE))[0]
+    for _ in range(doc_count):
+        d_id: int = struct.unpack_from(const.DOC_ID_FMT, f.read(const.DOC_ID_SIZE))[0]
+
+        url_len: int = struct.unpack_from(const.URL_FMT, f.read(const.URL_LEN_SIZE))[0]
         
-        ptr = doc_id_to_url_offset
+        url_bytes: bytes = f.read(url_len)
 
-        doc_count = struct.unpack_from(const.URL_DICT_LEN_FMT, mm, ptr)[0]
-        ptr += const.URL_DICT_LEN_SIZE
-
-        for _ in range(doc_count):
-            d_id = struct.unpack_from(const.DOC_ID_FMT, mm, ptr)[0]
-            ptr += const.DOC_ID_SIZE
-
-            url_len = struct.unpack_from(const.URL_FMT, mm, ptr)[0]
-            ptr += const.URL_SIZE
+        if d_id == doc_id:
+            f.seek(0)
+            return url_bytes.decode()
             
-            url_bytes = mm[ptr : ptr + url_len]
-            ptr += url_len
+    f.seek(0)
+    return ""
 
-            if d_id == doc_id:
-                return url_bytes.decode()            
-                
-        return ""
-
-    finally:
-        mm.close()
-        f.close()
-
-def get_document_count(inv_index_path: Path) -> int:
+def get_document_count(f: BufferedReader) -> int:
     """
     Gets the total number of documents in the index.
     Returns the count from the document-to-URL mapping section.
     """
-    f, mm = open_mmap(inv_index_path)
+    magic, _, _, doc_id_to_url_offset = struct.unpack_from(const.INDEX_HEADER_FMT, f.read(const.INDEX_HEADER_SIZE))
+    validate_magic_num(magic)
+    f.seek(doc_id_to_url_offset)
 
-    try:
-        ptr = 0
-        magic, _, _, doc_id_to_url_offset = struct.unpack_from(const.HEADER_FMT, mm, ptr)
-        validate_magic_num(magic)
-        
-        ptr = doc_id_to_url_offset
-        url_dict_len = struct.unpack_from(const.URL_DICT_LEN_FMT, mm, ptr)[0]
-        return url_dict_len if url_dict_len > 0 else 1
+    url_dict_len = struct.unpack_from(const.URL_DICT_LEN_FMT, f.read(const.URL_DICT_LEN_SIZE))[0]
+    if url_dict_len < 0:
+        raise IOError(f"url_dict_len invalid: {url_dict_len}")
+    f.seek(0)
+    return url_dict_len
 
-    finally:
-        mm.close()
-        f.close()
-
-def load_index_from_mmap(segment_file: Path) -> "InvertedIndex":
+def load_index_full(f: BufferedReader) -> "InvertedIndex":
     """
     Reads a full inverted index segment from disk into an InvertedIndex object.
+    DO NOT USE IN SEARCH ENGINE; TESTING PURPOSES ONLY
     """
     index = InvertedIndex()
-    f, mm = open_mmap(segment_file)
     try:
-        ptr = 0
-        magic, _, index_dict_offset, doc_id_to_url_offset = struct.unpack_from(const.HEADER_FMT, mm, ptr)
+        magic, _, index_dict_offset, doc_id_to_url_offset = struct.unpack_from(const.INDEX_HEADER_FMT, f.read(const.INDEX_HEADER_SIZE))
         validate_magic_num(magic)
+        f.seek(index_dict_offset)
+        index_dict_len: int = struct.unpack_from(const.INDEX_DICT_LEN_FMT, f.read(const.INDEX_DICT_LEN_SIZE))[0]
 
-        ptr = index_dict_offset
-        
-        index_dict_len: int = struct.unpack_from(const.INDEX_DICT_LEN_FMT, mm, ptr)[0]
-        ptr += const.INDEX_DICT_LEN_SIZE
         for _ in range(index_dict_len):
-            term_len = struct.unpack_from(const.TERM_LEN_FMT, mm, ptr)[0]
-            ptr += const.TERM_LEN_SIZE
+            term_len = struct.unpack_from(const.TERM_LEN_FMT, f.read(const.TERM_LEN_SIZE))[0]
 
-            t_bytes = mm[ptr : ptr + term_len]
-            term = t_bytes.decode()
-            ptr += term_len
+            term = f.read(term_len).decode()
 
-            p_len = struct.unpack_from(const.POSTING_COUNT_FMT, mm, ptr)[0]
-            ptr += const.POSTING_COUNT_SIZE
-
+            p_len = struct.unpack_from(const.POSTING_COUNT_FMT, f.read(const.POSTING_COUNT_SIZE))[0]
             postings = []
-            for i in range(p_len):
-                doc_id, tf, importance = struct.unpack_from(const.POSTING_FMT, mm, ptr + (i * const.POSTING_SIZE))
+            for _ in range(p_len):
+                doc_id, tf, importance = struct.unpack_from(const.POSTING_FMT, f.read(const.POSTING_SIZE))
                 postings.append(Posting(doc_id, tf, importance))
-            ptr += p_len * const.POSTING_SIZE
 
             index.index_dict[term].extend(postings)
             del postings
 
-        ptr = doc_id_to_url_offset
-        doc_count = struct.unpack_from(const.URL_DICT_LEN_FMT, mm, ptr)[0]
-        ptr += const.URL_DICT_LEN_SIZE
+        f.seek(doc_id_to_url_offset)
+        doc_count = struct.unpack_from(const.URL_DICT_LEN_FMT, f.read(const.URL_DICT_LEN_SIZE))[0]
         for _ in range(doc_count):
-            doc_id = struct.unpack_from(const.DOC_ID_FMT, mm, ptr)[0]
-            ptr += const.DOC_ID_SIZE
+            doc_id = struct.unpack_from(const.DOC_ID_FMT, f.read(const.DOC_ID_SIZE))[0]
             
-            url_len = struct.unpack_from(const.URL_FMT, mm, ptr)[0]
-            ptr += const.URL_SIZE
+            url_len = struct.unpack_from(const.URL_FMT, f.read(const.URL_SIZE))[0]
             
-            url = mm[ptr : ptr + url_len].decode()
+            url = f.read(url_len).decode()
             index.doc_id_to_url[doc_id] = url
-            ptr += url_len
 
     finally:
-        mm.close()
-        f.close()
         gc.collect()
-
+    f.seek(0)
     return index
 
 class InvertedIndex:
@@ -189,12 +178,13 @@ class InvertedIndex:
     def add_posting(self, term: str, posting: Posting) -> None:
         self.index_dict[term].append(posting)
 
-    def save_index(self, inv_index_path: Path) -> None:
+    def save(self, inv_index_path: Path) -> dict[str, int]:
+        term_offsets: dict[str, int] = {}
         with open(inv_index_path, "wb") as f:
             # Header
-            f.write(struct.pack(const.HEADER_FMT, 
-                                const.HEADER_MAGIC, 
-                                const.HEADER_VERSION, 
+            f.write(struct.pack(const.INDEX_HEADER_FMT, 
+                                const.INDEX_HEADER_MAGIC, 
+                                const.INDEX_HEADER_VERSION, 
                                 0, 0)) # two spots for offsets
 
             offsets = {}
@@ -205,12 +195,14 @@ class InvertedIndex:
             f.write(struct.pack(const.INDEX_DICT_LEN_FMT, len(self.index_dict)))
 
             for term in sorted(self.index_dict):
-                postings: list[Posting] = self.index_dict[term]
-
+                term_offsets[term] = f.tell()
+                # write a term
                 term_b = term.encode()
                 f.write(struct.pack(const.TERM_LEN_FMT, len(term_b)))
                 f.write(term_b)
 
+
+                postings: list[Posting] = self.index_dict[term]
                 f.write(struct.pack(const.POSTING_COUNT_FMT, len(postings)))
                 for posting in postings:
                     f.write(struct.pack(const.POSTING_FMT, 
@@ -230,12 +222,13 @@ class InvertedIndex:
                 f.write(url_b)
                             
             # adding offsets to header
-            f.seek(const.HEADER_SIZE - const.OFFSETS_SIZE)
+            f.seek(const.INDEX_HEADER_SIZE - const.OFFSETS_SIZE)
             f.write(struct.pack(
                 const.OFFSETS_FMT,
                 offsets["index_dict"],
                 offsets["doc_id_to_url"],
             ))
+        return term_offsets
     
     def get_analytics(self) -> dict[str, int | float]:
         index = self.index_dict

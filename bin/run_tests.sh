@@ -2,6 +2,9 @@
 
 SESSION_NAME="search-engine"
 
+mkdir -p examples/results
+mkdir -p examples/errors
+
 # Check if tmux session exists
 tmux has-session -t "$SESSION_NAME" 2>/dev/null
 
@@ -13,13 +16,16 @@ else
     echo "Tmux session '$SESSION_NAME' already exists."
 fi
 
+tmux send-keys -t "$SESSION_NAME" "source .venv/bin/activate" C-m
+
 if [[ "$1" == "-i" ]]; then
     shift
-    tmux send-keys -t "$SESSION_NAME" "python3 run_indexer.py -l warn > tests/indexer.result" C-m
+    tmux send-keys -t "$SESSION_NAME" "python3 run_indexer.py -l warn > examples/results/indexer.result 2> examples/errors/indexer.err" C-m
 fi
 
-for test in "$@"; do
-    tmux send-keys -t "$SESSION_NAME" "python3 run_search_engine.py < tests/$test.txt > tests/$test.result" C-m
+for testfile in "$@"; do
+    test=$(basename $testfile .txt)
+    tmux send-keys -t "$SESSION_NAME" "python3 run_search_engine.py < tests/$test.txt > examples/results/$test.result 2> examples/errors/$test.err" C-m
 done
 
-tmux attach -t "$SESSION_NAME"
+echo "Tests Started"

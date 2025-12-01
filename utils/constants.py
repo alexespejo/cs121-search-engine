@@ -24,18 +24,19 @@ INDEX_FILENAME = "inverted_index"
 # H => unsigned short
 # f => float
 
-HEADER_MAGIC = b"NIDX" # should be 4 bytes
-HEADER_MAGIC_SIZE = len(HEADER_MAGIC)
-if HEADER_MAGIC_SIZE != 4:
-    raise TypeError("Inappropriate header magic number")
-HEADER_VERSION = 1
+# INDEX
+INDEX_HEADER_MAGIC = b"NIDX" # should be 4 bytes
+INDEX_HEADER_MAGIC_SIZE = len(INDEX_HEADER_MAGIC)
+if INDEX_HEADER_MAGIC_SIZE != 4:
+    raise TypeError("INDEX: Inappropriate header magic number")
+INDEX_HEADER_VERSION = 2
 
 # magic, version, index_dict_offset, url_map_offset
-HEADER_FMT = f"<{HEADER_MAGIC_SIZE}sIQQ"
-HEADER_SIZE = calcsize(HEADER_FMT)
+INDEX_HEADER_FMT = f"<{INDEX_HEADER_MAGIC_SIZE}sIQQ"
+INDEX_HEADER_SIZE = calcsize(INDEX_HEADER_FMT)
 
-
-INDEX_DICT_LEN_FMT = "<I" # length of the index_dict
+# length of the index_dict
+INDEX_DICT_LEN_FMT = "<I" 
 INDEX_DICT_LEN_SIZE = calcsize(INDEX_DICT_LEN_FMT)
 
 # length of the term

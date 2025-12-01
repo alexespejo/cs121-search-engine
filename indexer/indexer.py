@@ -1,7 +1,7 @@
 import utils.constants as const
 from utils.text_processing import extract_fields_html, tokenize_fields, calculate_postings
 from utils.file_io import FilePointer, is_valid_dir, is_valid_file, get_dir_size, rm_dir, save_file_list, load_file_list, get_json_file_list
-from indexer.inverted_index import InvertedIndex, Posting, load_index_from_mmap
+from indexer.inverted_index import InvertedIndex, Posting, load_index_full
 
 import json
 import mimetypes
@@ -263,7 +263,7 @@ class Indexer:
             self.file_ptr.file_idx += 1
 
             if batch_size > 0 and dirty_count >= batch_size:
-                self.inv_index.save_index(Path(f"{self.tmp_indexes_path}/inverted_index_{str(self.file_ptr.batch_counter)}.nidx"))
+                self.inv_index.save(Path(f"{self.tmp_indexes_path}/inverted_index_{str(self.file_ptr.batch_counter)}.nidx"))
                 self.file_ptr.save_pointer()
                 
                 # CLEARS INDEX FROM RAM
@@ -274,7 +274,7 @@ class Indexer:
             logger.info(f"File {self.file_ptr.file_idx} / {file_list_len} processed")
 
         logger.info("Final save after all files processed...")
-        self.inv_index.save_index(Path(f"{self.tmp_indexes_path}/inverted_index_{str(self.file_ptr.batch_counter)}.nidx"))
+        self.inv_index.save(Path(f"{self.tmp_indexes_path}/inverted_index_{str(self.file_ptr.batch_counter)}.nidx"))
 
         logger.info("All files processed successfully")
 
@@ -299,11 +299,11 @@ class Indexer:
             merged_index: InvertedIndex = InvertedIndex()
 
             for segment_file in [seg_a, seg_b]:
-                segment_index = load_index_from_mmap(segment_file)
-                for term, postings in segment_index.index_dict.items():
-                    merged_index.index_dict[term].extend(postings)
-                merged_index.doc_id_to_url.update(segment_index.doc_id_to_url)
-
+                with open(segment_file, "rb") as f:
+                    segment_index = load_index_full(f)
+                    for term, postings in segment_index.index_dict.items():
+                        merged_index.index_dict[term].extend(postings)
+                    merged_index.doc_id_to_url.update(segment_index.doc_id_to_url)
                 del segment_index
                 gc.collect()
 
@@ -312,7 +312,7 @@ class Indexer:
                 postings.sort()
 
             merged_file = self.tmp_indexes_path / f"tmp_merged_{temp_count}.nidx"
-            merged_index.save_index(merged_file)
+            merged_index.save(merged_file)
             
             del merged_index
             gc.collect()
@@ -322,10 +322,11 @@ class Indexer:
             temp_count += 1
 
         final_file = tmp_index_files[0]
-        final_index = load_index_from_mmap(final_file)
+        with open(final_file, "rb") as f:
+            final_index = load_index_full(f)
 
         final_index_file = self.index_path / f"main_{const.INDEX_FILENAME}.nidx"
-        final_index.save_index(final_index_file)
+        final_index.save(final_index_file)
         logger.info(f"Merged index saved to {final_index_file}")
 
     def display_report(self, report_output_file: str | None = None) -> None:
@@ -342,7 +343,8 @@ class Indexer:
             raise IOError(error_message)
 
         logger.info("Displaying report...")
-        self.inv_index = load_index_from_mmap(self.index_path / f"main_{const.INDEX_FILENAME}.nidx")
+        with open(self.index_path / f"main_{const.INDEX_FILENAME}.nidx", "rb") as f:
+            self.inv_index = load_index_full(f)
         analytics = self.inv_index.get_analytics()
         index_size_kb = get_dir_size(self.index_path, unit="KB")
         index_size_mb = get_dir_size(self.index_path, unit="MB")
