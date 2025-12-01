@@ -3,9 +3,6 @@ from indexer.inverted_index import Posting
 
 import bs4
 from bs4 import MarkupResemblesLocatorWarning
-import nltk
-nltk.download("punkt")
-nltk.download("punkt_tab")
 from nltk.tokenize import word_tokenize
 from nltk.probability import FreqDist
 from nltk.stem import PorterStemmer
@@ -40,13 +37,16 @@ def tokenize_fields(fields: dict[str, list[str]]) -> tuple[FreqDist, set[str]]:
     combined_text_list = []
     combined_text_list.extend(fields["body"])
     combined_text_list.extend(important_words)
-
+    
     combined_text_str = " ".join(combined_text_list)
     combined_text_str = combined_text_str.lower()
     
     stemmer = PorterStemmer()
-    word_freq_dist = FreqDist(stemmer.stem(word.lower(), to_lowercase=True) 
-                              for word in word_tokenize(combined_text_str) if word.isalnum())    
+    word_freq_dist = FreqDist(
+        stemmer.stem(word.lower(), to_lowercase=True)
+        for word in word_tokenize(combined_text_str, preserve_line=True)
+        if word.isalnum()
+    )
     
     return word_freq_dist, important_words_set
 
