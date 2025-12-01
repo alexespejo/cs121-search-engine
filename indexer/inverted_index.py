@@ -24,7 +24,7 @@ def validate_magic_num(magic: bytes):
         logger.error(error_message)
         raise IOError(error_message)
 
-def find_term_offset(filename: str, target_term: str) -> int | None:
+def find_term_offset(filename: str, target_term: str):
     """Performs binary search on the term_offsets file, retrieving the offset for the target term
 
     Args:
@@ -230,7 +230,7 @@ class InvertedIndex:
             ))
         return term_offsets
     
-    def get_analytics(self) -> dict[str, int | float]:
+    def get_analytics(self):
         index = self.index_dict
         doc_map = self.doc_id_to_url
 
@@ -253,7 +253,7 @@ class InvertedIndex:
             ),
         }
 
-    def display(self, file_name: str | None = None) -> None:
+    def display(self, file_name: str = None) -> None:
         lines = [
             "",
             "=" * 70,

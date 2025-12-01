@@ -79,11 +79,11 @@ class SearchEngine:
 
     def get_search_results(self, type: QueryType = QueryType.boolean, top: int = const.TOP_RESULTS_DEFAULT) -> list[str]:
         results_and_score: list[tuple[str, float]] = []
-        match type:
-            case QueryType.boolean:
-                results_and_score = self.boolean_query(top)
-            case _:
-                results_and_score = self.boolean_query(top)
+        results_and_score = self.boolean_query(top)
+        # match type:
+        #     case QueryType.boolean:
+        #     case _:
+        #         results_and_score = self.boolean_query(top)
 
         results = [e[0] for e in results_and_score]
         if top < 0:
