@@ -15,12 +15,12 @@ class Query:
     def __repr__(self):
         return self.original_str
 
-    def parse_query(self, query_str: str) -> list[str] | None:
+    def parse_query(self, query_str: str) -> list[str]:
         if not query_str:
-            return None
+            return []
         allowed_chars = set(string.ascii_letters + string.digits + " ")
         if not all(char in allowed_chars for char in query_str):
-            return None
+            return []
         
         stemmer = PorterStemmer()
         unique_query_words = set([stemmer.stem(word.lower(), to_lowercase=True) for word in word_tokenize(self.original_str)])
