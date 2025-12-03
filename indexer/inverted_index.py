@@ -1,5 +1,6 @@
 from io import BufferedReader
 import utils.constants as const
+from indexer.posting import Posting
 
 from collections import defaultdict
 from pathlib import Path
@@ -10,15 +11,7 @@ from logging import getLogger
 
 logger = getLogger(__name__)
 
-class Posting:
-    def __init__(self, doc_id: int, term_frequency: float, importance: float):
-        self.doc_id: int = doc_id
-        self.term_frequency: float = term_frequency
-        self.importance: float = importance
-    def __lt__(self, other: "Posting"):
-        return self.doc_id < other.doc_id
-
-def validate_magic_num(magic: bytes):
+def _validate_magic_num(magic: bytes):
     if magic != b"NIDX":
         error_message : str = f"Incorrect Magic Number, likely incorrect file. {magic.decode()}"
         logger.error(error_message)
@@ -71,7 +64,7 @@ def find_term_offset(filename: str, target_term: str):
 def get_postings(f: BufferedReader, term: str) -> list[Posting]:
     # read header
     magic, _, _, _ = struct.unpack_from(const.INDEX_HEADER_FMT, f.read(const.INDEX_HEADER_SIZE))
-    validate_magic_num(magic)
+    _validate_magic_num(magic)
     
     offset = find_term_offset("index/term_offsets.dat", term)
     if not offset:
@@ -86,8 +79,10 @@ def get_postings(f: BufferedReader, term: str) -> list[Posting]:
         postings = []
         p_len = struct.unpack_from(const.POSTING_COUNT_FMT, f.read(const.POSTING_COUNT_SIZE))[0]
         for _ in range(p_len):
-            doc_id, tf, importance = struct.unpack_from(const.POSTING_FMT,f.read(const.POSTING_SIZE))
-            postings.append(Posting(doc_id, tf, importance))
+            doc_id, weighted_tf = struct.unpack_from(const.POSTING_FMT,f.read(const.POSTING_SIZE))
+            p = Posting(doc_id)
+            p.weighted_tf = weighted_tf
+            postings.append(p)
         f.seek(0)
         return postings
 
@@ -96,7 +91,7 @@ def get_postings(f: BufferedReader, term: str) -> list[Posting]:
 
 def get_url(f: BufferedReader, doc_id: int) -> str:
     magic, _, _, doc_id_to_url_offset = struct.unpack_from(const.INDEX_HEADER_FMT, f.read(const.INDEX_HEADER_SIZE))
-    validate_magic_num(magic)
+    _validate_magic_num(magic)
     f.seek(doc_id_to_url_offset)
 
     doc_count = struct.unpack_from(const.URL_DICT_LEN_FMT, f.read(const.URL_DICT_LEN_SIZE))[0]
@@ -120,7 +115,7 @@ def get_document_count(f: BufferedReader) -> int:
     Returns the count from the document-to-URL mapping section.
     """
     magic, _, _, doc_id_to_url_offset = struct.unpack_from(const.INDEX_HEADER_FMT, f.read(const.INDEX_HEADER_SIZE))
-    validate_magic_num(magic)
+    _validate_magic_num(magic)
     f.seek(doc_id_to_url_offset)
 
     url_dict_len = struct.unpack_from(const.URL_DICT_LEN_FMT, f.read(const.URL_DICT_LEN_SIZE))[0]
@@ -137,7 +132,7 @@ def load_index_full(f: BufferedReader) -> "InvertedIndex":
     index = InvertedIndex()
     try:
         magic, _, index_dict_offset, doc_id_to_url_offset = struct.unpack_from(const.INDEX_HEADER_FMT, f.read(const.INDEX_HEADER_SIZE))
-        validate_magic_num(magic)
+        _validate_magic_num(magic)
         f.seek(index_dict_offset)
         index_dict_len: int = struct.unpack_from(const.INDEX_DICT_LEN_FMT, f.read(const.INDEX_DICT_LEN_SIZE))[0]
 
@@ -149,8 +144,10 @@ def load_index_full(f: BufferedReader) -> "InvertedIndex":
             p_len = struct.unpack_from(const.POSTING_COUNT_FMT, f.read(const.POSTING_COUNT_SIZE))[0]
             postings = []
             for _ in range(p_len):
-                doc_id, tf, importance = struct.unpack_from(const.POSTING_FMT, f.read(const.POSTING_SIZE))
-                postings.append(Posting(doc_id, tf, importance))
+                doc_id, weighted_tf = struct.unpack_from(const.POSTING_FMT, f.read(const.POSTING_SIZE))
+                p = Posting(doc_id)
+                p.weighted_tf = weighted_tf
+                postings.append(p)
 
             index.index_dict[term].extend(postings)
             del postings
@@ -207,10 +204,10 @@ class InvertedIndex:
                 for posting in postings:
                     f.write(struct.pack(const.POSTING_FMT, 
                                         posting.doc_id, 
-                                        posting.term_frequency, 
-                                        posting.importance
-                                        ))
-
+                                        posting.weighted_tf
+                                        )
+                    )
+            
             # doc_id_to_url
             offsets["doc_id_to_url"] = f.tell()
             f.write(struct.pack(const.URL_DICT_LEN_FMT, len(self.doc_id_to_url)))

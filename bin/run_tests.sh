@@ -13,7 +13,7 @@ if [ $? != 0 ]; then
     tmux new-session -d -s "$SESSION_NAME"
     echo "Session '$SESSION_NAME' created."
 else
-    echo "Tmux session '$SESSION_NAME' already exists."
+    echo "Tmux session '$SESSION_NAME' already exists, starting in '$SESSION_NAME'"
 fi
 
 tmux send-keys -t "$SESSION_NAME" "source .venv/bin/activate" C-m

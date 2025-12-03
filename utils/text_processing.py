@@ -4,7 +4,6 @@ from indexer.inverted_index import Posting
 import bs4
 import nltk
 from nltk.tokenize import word_tokenize
-from nltk.probability import FreqDist
 from nltk.stem import PorterStemmer
 from warnings import filterwarnings
 
@@ -18,40 +17,47 @@ def calculate_importance(token: str, important_words_set: set[str]) -> float:
         importance_score += 1
     return importance_score
 
-def calculate_postings(doc_id: int, 
-                       word_freq_dist: FreqDist, 
-                       important_words_set: set[str]
-                       ) -> dict[str, Posting]:
-    postings_dict: dict[str, Posting] = {}
-    for token, frequency in word_freq_dist.items():
-        tf: float = float(frequency) / float(word_freq_dist.N())
-        importance: float = calculate_importance(token, important_words_set)
-        postings_dict[token] = Posting(doc_id, tf, importance)
-    return postings_dict
+def calculate_postings(doc_id: int, zone_tokens: dict[str, list[str]]) -> dict[str, Posting]:
+    postings: dict[str, Posting] = {}
 
-def tokenize_fields(fields: dict[str, list[str]]) -> tuple[FreqDist, set[str]]:
-    important_words: list = []
-    for field, text_list in fields.items():
-        if field != "body":
-            important_words.extend(text_list)
-    
-    important_words_set: set[str] = set(important_words)
-    
-    combined_text_list = []
-    combined_text_list.extend(fields["body"])
-    combined_text_list.extend(important_words)
+    for zone_key, zone_name in const.ZONES.items():
+            token_list = zone_tokens.get(zone_key, [])
+            for term in token_list:
+                if term not in postings:
+                    postings[term] = Posting(doc_id)
+                postings[term].add(zone_name)
 
-    combined_text_str = " ".join(combined_text_list)
-    combined_text_str = combined_text_str.lower()
-    
+    return postings
+
+
+def tokenize_fields(fields: dict) -> dict[str, list[str]]:
     stemmer = PorterStemmer()
-    word_freq_dist = FreqDist(stemmer.stem(word.lower(), to_lowercase=True) 
-                              for word in word_tokenize(combined_text_str) 
-                              if word.isascii() and word.isalnum())    
-    
-    return word_freq_dist, important_words_set
 
-def extract_fields_html(html_content: str) -> dict[str, list[str]]:
+    def tokenize_list(text_list):
+        joined = " ".join(text_list).lower()
+        return [
+            stemmer.stem(tok, to_lowercase=True)
+            for tok in word_tokenize(joined)
+            if tok.isascii() and tok.isalnum()
+        ]
+
+    out = {}
+
+    out["body_tokens"] = tokenize_list(fields.get("body", []))
+    out["title_tokens"] = tokenize_list(fields.get("title"))
+    out["h1_tokens"] = tokenize_list(fields.get("h1", []))
+    out["h2_tokens"] = tokenize_list(fields.get("h2", []))
+    out["h3_tokens"] = tokenize_list(fields.get("h3", []))
+    out["bold_tokens"] = tokenize_list(fields.get("bold", []))
+
+    # anchors is [(href, anchor_text)]
+    anchor_texts = [text for _, text in fields.get("anchors", [])]
+    out["anchor_tokens"] = tokenize_list(anchor_texts)
+
+    return out
+
+
+def extract_fields_html(html_content: str) -> dict[str, list[str] | list[tuple[str, str]]]:
     soup: bs4.BeautifulSoup = bs4.BeautifulSoup(html_content, 'html.parser')
     
     for invalid_tag in const.INVALID_TAGS:
@@ -63,6 +69,12 @@ def extract_fields_html(html_content: str) -> dict[str, list[str]]:
     h2: list[str] = [h.get_text(strip=True) for h in soup.find_all("h2")]
     h3: list[str] = [h.get_text(strip=True) for h in soup.find_all("h3")]
     bold: list[str] = [b.get_text(strip=True) for b in soup.find_all(["b", "strong"]) if b.get_text(strip=True)]
+    anchors: list[tuple[str, str]] = []
+    for a in soup.find_all("a"):
+        anchor_text = a.get_text(strip=True)
+        href = str(a.get("href", "")).strip()
+        if anchor_text and href:
+            anchors.append((href, anchor_text))
     
     for tag in soup.find_all(["h1", "h2", "h3", "b", "strong"]):
         tag.extract()
@@ -75,5 +87,6 @@ def extract_fields_html(html_content: str) -> dict[str, list[str]]:
         "h2" : h2,
         "h3" : h3,
         "bold" : bold,
-        "body" : body
+        "body" : body,
+        "anchors" : anchors
     }

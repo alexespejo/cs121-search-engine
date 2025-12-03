@@ -59,7 +59,7 @@ class SearchEngine:
         
         doc_scores: dict[int, float] = {}
         term_postings_by_doc = {
-            term: {p.doc_id: p.term_frequency for p in postings}
+            term: {p.doc_id: p.weighted_tf for p in postings}
             for term, postings in term_postings.items()
         }
         for doc_id in common_doc_ids:

@@ -1,14 +1,15 @@
 import utils.constants as const
 from utils.text_processing import extract_fields_html, tokenize_fields, calculate_postings
 from utils.file_io import FilePointer, is_valid_dir, is_valid_file, get_dir_size, rm_dir, save_file_list, load_file_list, get_json_file_list
-from indexer.inverted_index import InvertedIndex, Posting, load_index_full
+from indexer.inverted_index import InvertedIndex, load_index_full
+from indexer.posting import Posting
 from indexer.simhash import simhash, hamming
 
 import json
 import mimetypes
 import gc
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlunparse, urljoin
 from logging import getLogger
 
 logger = getLogger(__name__)
@@ -89,8 +90,8 @@ class Indexer:
             logger.error(error_message)
             raise ValueError(error_message)
         logger.info(f"Processing in batches of {self.batch_size} JSON files each")
-        self.process_files_in_batches(self.batch_size)
-        self.merge_indexes()
+        self._process_files_in_batches(self.batch_size)
+        self._merge_indexes()
         rm_dir(self.tmp_indexes_path)
         logger.info("Indexer done")
 
@@ -112,18 +113,25 @@ class Indexer:
         gc.collect()
         self.inv_index = InvertedIndex()
 
-    def get_next_doc_id(self):
+    def _get_next_doc_id(self):
         doc_id = self.next_doc_id
         self.next_doc_id += 1
         return doc_id
 
-    def is_dupe(self, new_fp: int) -> int | None:
+    def _is_dupe(self, new_fp: int) -> int | None:
         for doc_id, fp in self.doc_fingerprints.items():
             if hamming(new_fp, fp) <= const.HAMMING_THRESHOLD:
                 return doc_id
         return None
 
-    def index_document(self, url: str, content: str, reuse_doc_id: bool = False) -> None:
+    def _normalize_url(self, base, link):
+        abs_url = urljoin(base, link)
+        parts = urlparse(abs_url)
+        netloc = parts.netloc.lower()
+        path = parts.path.rstrip("/")
+        return urlunparse((parts.scheme.lower(), netloc, path, "", "", ""))
+
+    def _index_document(self, url: str, content: str, reuse_doc_id: bool = False) -> None:
         """
         Process a document and add it to the index.
         
@@ -136,53 +144,39 @@ class Indexer:
         Returns:
             None
         """
-        
 
-        if reuse_doc_id:
-            doc_id = next((key for key, value in self.inv_index.doc_id_to_url.items() if value == url), None)
-            if doc_id is None:
-                doc_id = self.get_next_doc_id()
-        else:
-            doc_id = self.get_next_doc_id()
-        
-        self.inv_index.doc_id_to_url[doc_id] = url
-        
-        # extract the fields
-        try:
-            fields: dict[str, list[str]] = extract_fields_html(content)
-        except Exception as e:
-            logger.warning(f"Failed to extract fields from {url}: {e}")
-            return
+        url = self._normalize_url(url, url)
 
-        # tokenize the fields
-        try:
-            word_freq_dist, important_words_set = tokenize_fields(fields)
+        fields = extract_fields_html(content)
 
-            postings: dict[str, Posting] = calculate_postings(doc_id, 
-                                                              word_freq_dist, 
-                                                              important_words_set)
-        except Exception as e:
-            logger.warning(f"Failed to tokenize {url}: {e}")
-            return
-        
         tokens = []
-        for lst in fields.values():
-            tokens.extend(lst)
-        
-        fp = simhash(tokens)
+        zone_tokens = tokenize_fields(fields)
+        for _, tok_list in zone_tokens:
+            tokens.extend(tok_list)
 
-        dup_id = self.is_dupe(fp)
+        fp = simhash(tokens)
+        dup_id = self._is_dupe(fp)
         if dup_id is not None:
             logger.info(f"Skipping {url}: near-duplicate of doc {dup_id}")
             return
 
-        # add the postings to the index
+        if reuse_doc_id:
+            doc_id = next((key for key, value in self.inv_index.doc_id_to_url.items() if value == url), None)
+            if doc_id is None:
+                doc_id = self._get_next_doc_id()
+        else:
+            doc_id = self._get_next_doc_id()
+        self.inv_index.doc_id_to_url[doc_id] = url
+
+        postings = calculate_postings(doc_id, zone_tokens)
+
         for term, posting in postings.items():
             self.inv_index.add_posting(term, posting)
-        
+
         self.doc_fingerprints[doc_id] = fp
 
-    def is_file_skippable(self, url: str) -> tuple[bool, str]:
+
+    def _is_file_skippable(self, url: str) -> tuple[bool, str]:
         """
         Check if a URL should be skipped based on file extension or content type.
         
@@ -218,7 +212,7 @@ class Indexer:
         except Exception as e:
             return True, f"URL parsing error: {e}"
 
-    def process_file(self, file_path: Path, reuse_doc_id: bool = False) -> None:
+    def _process_file(self, file_path: Path, reuse_doc_id: bool = False) -> None:
         """
         Process a single JSON file.
         
@@ -243,20 +237,20 @@ class Indexer:
                 logger.warning(f"Missing url or content in {file_path}")
                 return
             
-            should_skip, reason = self.is_file_skippable(url)
+            should_skip, reason = self._is_file_skippable(url)
             if should_skip:
                 logger.debug(f"Skipping URL (reason: {reason}): {url}")
                 logger.debug(f"Skipping file: {file_path}")
                 return
 
-            self.index_document(url, content, reuse_doc_id=reuse_doc_id)
+            self._index_document(url, content, reuse_doc_id=reuse_doc_id)
             
         except json.JSONDecodeError as e:
             logger.error(f"Failed to parse JSON file {file_path}: {e}")
         except Exception as e:
             logger.error(f"Failed to process file {file_path}: {e}")
     
-    def process_files_in_batches(self, batch_size: int) -> None:
+    def _process_files_in_batches(self, batch_size: int) -> None:
         """
         Process JSON files one-by-one, saving the index and clearing RAM every `batch_size` files.
         
@@ -281,7 +275,7 @@ class Indexer:
         dirty_count = 0
         while self.file_ptr.file_idx < file_list_len:
             logger.info(f"Processing file {self.file_ptr.file_idx} / {file_list_len}...")
-            self.process_file(self.file_list[self.file_ptr.file_idx], reuse_doc_id=False)
+            self._process_file(self.file_list[self.file_ptr.file_idx], reuse_doc_id=False)
             dirty_count += 1
             self.file_ptr.file_idx += 1
 
@@ -301,7 +295,7 @@ class Indexer:
 
         logger.info("All files processed successfully")
 
-    def merge_indexes(self):
+    def _merge_indexes(self):
         if not is_valid_dir(self.index_path):
             error_message: str = f"index directory {self.index_path} is invalid."
             logger.error(error_message)

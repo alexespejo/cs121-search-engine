@@ -5,6 +5,25 @@ from struct import calcsize
 BATCH_SIZE_DEFAULT = 15_000
 TOP_RESULTS_DEFAULT = 5
 HAMMING_THRESHOLD = 5
+ZONES = {
+    "body_tokens":   "body",
+    "title_tokens":  "title",
+    "h1_tokens":     "h1",
+    "h2_tokens":     "h2",
+    "h3_tokens":     "h3",
+    "bold_tokens":   "bold",
+    "anchor_tokens": "anchor"
+}
+WEIGHTS = {
+    "body": 1.0,
+    "title": 4.0,
+    "h1": 3.0,
+    "h2": 2.0,
+    "h3": 1.5,
+    "bold": 1.5,
+    "anchor": 5.0
+}
+
 # ======================================== CONFIG END ========================================
 
 # ======================================== FILE ========================================
@@ -49,7 +68,7 @@ POSTING_COUNT_FMT = "<I"
 POSTING_COUNT_SIZE = calcsize(POSTING_COUNT_FMT)
 
 # posting itself
-POSTING_FMT = "<Iff" # @TODO MAY CHANGE
+POSTING_FMT = "<If" # @TODO MAY CHANGE
 POSTING_SIZE = calcsize(POSTING_FMT)
 
 # length of the doc_id to url dict 
