@@ -1,12 +1,25 @@
-Traceback (most recent call last):
-  File "/home/ntandre1/4-2025-fall/cs121/assignments/cs121-search-engine/run_search_engine.py", line 39, in <module>
-    search_results: list[str] = search_engine.get_search_results(QueryType.boolean, num_results)
-                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ntandre1/4-2025-fall/cs121/assignments/cs121-search-engine/search/search_engine.py", line 82, in get_search_results
-    results_and_score = self.boolean_query_tf_idf(top)
-  File "/home/ntandre1/4-2025-fall/cs121/assignments/cs121-search-engine/search/search_engine.py", line 31, in boolean_query_tf_idf
-    postings = get_postings(self.index_fptr, term)
-  File "/home/ntandre1/4-2025-fall/cs121/assignments/cs121-search-engine/indexer/inverted_index.py", line 75, in get_postings
-    term_len = struct.unpack_from(const.TERM_LEN_FMT, f.read(const.TERM_LEN_SIZE))[0]
-               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-struct.error: unpack_from requires a buffer of at least 2 bytes for unpacking 2 bytes at offset 0 (actual buffer size is 0)
+Good job!: "qwertyuiop"
+Good job!: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+Good job!: "computational philogy"
+Good job!: "New York Times square root of a potato"
+Good job!: "unicode π δ λ 漢字 हिन्दी"
+Good job!: "neural network convergence proof"
+Good job!: "the"
+Good job!: "computer computer computer computer computer"
+Good job!: "statistical physics banana"
+Good job!: "genome sequencing CRISPR Cas9"
+Good job!: "ancient Greek philosophy metaphysics"
+Good job!: "random non-existent term xyz123"
+Good job!: "supercalifragilisticexpialidocious"
+Good job!: "fictitious chemical compound xyzium"
+Good job!: "verylongquerywithoutspacesandmeaning"
+Good job!: "extremely rare historical events"
+Good job!: "mis-typed search engine input"
+Good job!: "long string of numbers 12345678901234567890"
+Good job!: "concatenated keywords without separators"
+Good job!: "obscure linguistic terminology"
+Good job!: "complex multi-word nonsense query"
+Good job!: "rare programming language syntax"
+Good job!: "alien language symbols 𒀀𒁀𒂀"
+Good job!: "random unicode characters 🌀✨🚀"
+Good job!: "unlikely phrase combination blue elephant piano"

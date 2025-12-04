@@ -1,12 +1,10 @@
-Traceback (most recent call last):
-  File "/home/ntandre1/4-2025-fall/cs121/assignments/cs121-search-engine/run_search_engine.py", line 39, in <module>
-    search_results: list[str] = search_engine.get_search_results(QueryType.boolean, num_results)
-                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ntandre1/4-2025-fall/cs121/assignments/cs121-search-engine/search/search_engine.py", line 82, in get_search_results
-    results_and_score = self.boolean_query_tf_idf(top)
-  File "/home/ntandre1/4-2025-fall/cs121/assignments/cs121-search-engine/search/search_engine.py", line 31, in boolean_query_tf_idf
-    postings = get_postings(self.index_fptr, term)
-  File "/home/ntandre1/4-2025-fall/cs121/assignments/cs121-search-engine/indexer/inverted_index.py", line 75, in get_postings
-    term_len = struct.unpack_from(const.TERM_LEN_FMT, f.read(const.TERM_LEN_SIZE))[0]
-               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-struct.error: unpack_from requires a buffer of at least 2 bytes for unpacking 2 bytes at offset 0 (actual buffer size is 0)
+Good job!: "Monte Carlo Tree Search MCTS Checkers Python"
+Good job!: "mmap memoryview"
+Good job!: "B+ tree duplicate pages"
+Good job!: "matrix chain multiplication memoization"
+Good job!: "mmap multiple dictionaries serialization"
+Good job!: "distributed query Jaccard similarity"
+Good job!: "OpenSSH ed25519 key authentication Windows"
+Good job!: "kwalletd6 restart Arch"
+Good job!: "vector space model ranking"
+Good job!: "Restlet Jakarta EE Tomcat"
