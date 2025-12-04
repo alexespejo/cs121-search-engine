@@ -8,7 +8,7 @@ with integer IDs rather than raw URLs.
 
 import utils.constants as const
 from utils.file_io import is_valid_dir, is_valid_file, get_json_file_list, load_file_list, save_file_list
-from indexer.inverted_index import load_index_full
+from indexer.inverted_index import load_doc_id_to_url
 
 import json
 import pickle
@@ -115,10 +115,9 @@ class PageRank:
             raise FileNotFoundError(error_message)
         
         with open(index_file, 'rb') as f:
-            inv_index = load_index_full(f)
+            self.doc_id_to_url = load_doc_id_to_url(f)
         
         # Create URL to doc_id mapping (reverse of doc_id_to_url)
-        self.doc_id_to_url: dict[int, str] = inv_index.doc_id_to_url
         self.url_to_doc_id: dict[str, int] = {url: doc_id for doc_id, url in self.doc_id_to_url.items()}
         
         logger.info(f"Loaded {len(self.url_to_doc_id)} URL mappings")

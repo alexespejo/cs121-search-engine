@@ -124,6 +124,27 @@ def get_document_count(f: BufferedReader) -> int:
     f.seek(0)
     return url_dict_len
 
+def load_doc_id_to_url(f: BufferedReader) -> dict[int, str]:
+    doc_id_to_url: dict[int, str] = {}
+    try:
+        magic, _, _, doc_id_to_url_offset = struct.unpack_from(const.INDEX_HEADER_FMT, f.read(const.INDEX_HEADER_SIZE))
+        _validate_magic_num(magic)
+        
+        f.seek(doc_id_to_url_offset)
+        doc_count = struct.unpack_from(const.URL_DICT_LEN_FMT, f.read(const.URL_DICT_LEN_SIZE))[0]
+        for _ in range(doc_count):
+            doc_id = struct.unpack_from(const.DOC_ID_FMT, f.read(const.DOC_ID_SIZE))[0]
+            
+            url_len = struct.unpack_from(const.URL_FMT, f.read(const.URL_SIZE))[0]
+            
+            url = f.read(url_len).decode()
+            doc_id_to_url[doc_id] = url
+
+    finally:
+        gc.collect()
+    f.seek(0)
+    return doc_id_to_url
+
 def load_index_full(f: BufferedReader) -> "InvertedIndex":
     """
     Reads a full inverted index segment from disk into an InvertedIndex object.
