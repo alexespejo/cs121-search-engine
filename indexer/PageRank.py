@@ -187,7 +187,7 @@ class PageRank:
             
             # Find all anchor tags with href
             for anchor in soup.find_all('a', href=True):
-                href = anchor['href']
+                href: str = str(anchor['href'])
                 
                 # Skip empty, javascript, mailto, and anchor-only links
                 if not href or href.startswith(('javascript:', 'mailto:', 'tel:', '#')):
@@ -364,7 +364,7 @@ class PageRank:
         self.pagerank_scores = scores
         return scores
     
-    def save_pagerank(self, filepath: Path = None) -> None:
+    def save_pagerank(self, filepath: Path | None = None) -> None:
         """
         Save PageRank scores to a file.
         
@@ -385,7 +385,7 @@ class PageRank:
         
         logger.info(f"PageRank scores saved to {filepath}")
     
-    def save_graph(self, filepath: Path = None) -> None:
+    def save_graph(self, filepath: Path | None = None) -> None:
         """
         Save the link graph to a file.
         
