@@ -2,14 +2,12 @@
 .venv/
 /inverted-indexes
 /test-data
-/index
 __pycache__
 DEV
 data
 developer.zip
 /__pycache__
 /.ipynb_checkpoints
-index/*
 index_tmp/*
 index_debug/*
 pkl_json.py

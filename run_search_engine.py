@@ -36,7 +36,7 @@ if __name__ == '__main__':
             search_engine.accept_query("Enter Query: ")
             before = perf_counter_ns()
 
-            search_results: list[str] = search_engine.get_search_results(QueryType.boolean, num_results)
+            search_results = search_engine.get_search_results(QueryType.boolean, num_results)
             search_engine.display_results(search_results)
             
             time_diff_ns = perf_counter_ns() - before
