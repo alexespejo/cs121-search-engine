@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import utils.constants as const
 from search.search_engine import SearchEngine
 from search.query import Query, QueryType
+from indexer.PageRank import get_page_rank
 from time import perf_counter_ns
 
 
@@ -49,7 +50,7 @@ def search(q: str, top: int = const.TOP_RESULTS_DEFAULT) -> Dict[str, Any]:
         search_engine.query = Query(query_str)
 
         before = perf_counter_ns()
-        results: list[str] = search_engine.get_search_results(QueryType.boolean, top)
+        raw_results = search_engine.get_search_results(QueryType.boolean, top)
         time_diff_ns = perf_counter_ns() - before
     finally:
         # Close the underlying index file handle if present.
@@ -58,6 +59,15 @@ def search(q: str, top: int = const.TOP_RESULTS_DEFAULT) -> Dict[str, Any]:
 
     time_diff_ms: float = time_diff_ns / const.NS_TO_MS
     timed_out = time_diff_ms > 300.0
+
+    # Build results with PageRank
+    results = []
+    for doc_id, url, tfidf_score in raw_results:
+        results.append({
+            "url": url,
+            "tfidf_score": tfidf_score,
+            "pagerank": get_page_rank(doc_id)
+        })
 
     return {
         "query": query_str,

@@ -1,6 +1,7 @@
 from search.query import Query, QueryType
 import utils.constants as const
 from indexer.inverted_index import Posting, get_postings, get_url, get_document_count
+from indexer.PageRank import get_page_rank
 
 from pathlib import Path
 from logging import getLogger
@@ -17,10 +18,13 @@ class SearchEngine:
         query_str: str = input(input_message)
         self.query = Query(query_str)
 
-    def boolean_query(self, top: int) -> list[tuple[str, float]]:
+    def boolean_query(self, top: int) -> list[tuple[int, str, float]]:
         """
         Performs a boolean AND query on the inverted index.
         Returns documents containing ALL query terms, ranked by TF-IDF score.
+        
+        Returns:
+            List of (doc_id, url, tfidf_score) tuples.
         """
         if not self.query.parsed_query:
             return []
@@ -67,44 +71,57 @@ class SearchEngine:
         
         sorted_docs = sorted(doc_scores.items(), key=lambda x: x[1], reverse=True)[:top]
         
-        results: list[tuple[str, float]] = []
+        results: list[tuple[int, str, float]] = []
         for doc_id, score in sorted_docs:
             url = get_url(self.index_fptr, doc_id)
             if url:
-                results.append((url, score))
+                results.append((doc_id, url, score))
             else:
                 logger.warning(f"Could not find URL for doc_id {doc_id}")
         
         return results
 
-    def get_search_results(self, type: QueryType = QueryType.boolean, top: int = const.TOP_RESULTS_DEFAULT) -> list[str]:
-        results_and_score: list[tuple[str, float]] = []
-        results_and_score = self.boolean_query(top)
+    def get_search_results(self, type: QueryType = QueryType.boolean, top: int = const.TOP_RESULTS_DEFAULT) -> list[tuple[int, str, float]]:
+        """
+        Get search results with doc_id, url, and tfidf score.
+        
+        Returns:
+            List of (doc_id, url, tfidf_score) tuples.
+        """
+        results = self.boolean_query(top)
         # match type:
         #     case QueryType.boolean:
         #     case _:
-        #         results_and_score = self.boolean_query(top)
+        #         results = self.boolean_query(top)
 
-        results = [e[0] for e in results_and_score]
         if top < 0:
             logger.warning("top is negative, returning all results")
-            return [e[0] for e in results]
+            return results
         elif top == 0:
             logger.warning("top is zero, returning zero results")
-            return results
+            return []
         else:
             return results[:top]
 
-    def display_results(self, result_url_list: list[str]):
+    def display_results(self, results: list[tuple[int, str, float]]):
+        """
+        Display search results with PageRank scores.
+        
+        Args:
+            results: List of (doc_id, url, tfidf_score) tuples.
+        """
         print()
         print("=" * 70)
         print(f"Search Results for query: \"{self.query}\"")
         print("=" * 70)
-        result_len: int = len(result_url_list)
-        if result_len == 0:
+        if len(results) == 0:
             print(f"There were no results for query: \"{self.query}\"")
         else:
-            for i in range(len(result_url_list)):
-                print(f"{i + 1}: {result_url_list[i]}")
+            print(f"{'#':<3} {'URL':<45} {'TF-IDF':<10} {'PageRank':<10}")
+            print("-" * 70)
+            for i, (doc_id, url, tfidf_score) in enumerate(results, 1):
+                pagerank = get_page_rank(doc_id)
+                # Truncate URL if too long
+                display_url = url if len(url) <= 45 else url[:42] + "..."
+                print(f"{i:<3} {display_url:<45} {tfidf_score:<10.4f} {pagerank:<10.6f}")
         print("=" * 70)
-        

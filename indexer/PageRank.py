@@ -12,7 +12,6 @@ from indexer.inverted_index import load_index_full
 
 import json
 import pickle
-import bs4
 from bs4 import BeautifulSoup
 from pathlib import Path
 from urllib.parse import urlparse, urljoin, urldefrag
@@ -480,6 +479,33 @@ def load_pagerank(index_dir: str = const.INDEX_DIR_DEFAULT) -> dict[int, float]:
         data = pickle.load(f)
     
     return data['scores']
+
+
+# Module-level cache for scores
+_pagerank_cache: dict[int, float] | None = None
+
+
+def get_page_rank(doc_id: int, index_dir: str = const.INDEX_DIR_DEFAULT) -> float:
+    """
+    Get the PageRank score for a document.
+    
+    Args:
+        doc_id: The document ID to look up.
+        index_dir: Directory where pagerank.pkl is stored.
+        
+    Returns:
+        PageRank score (float), or 0.0 if not found or PageRank not computed.
+    """
+    global _pagerank_cache
+    
+    if _pagerank_cache is None:
+        try:
+            _pagerank_cache = load_pagerank(index_dir)
+        except FileNotFoundError:
+            logger.warning("PageRank file not found. Run run_pagerank.py first to compute PageRank scores.")
+            _pagerank_cache = {}
+    
+    return _pagerank_cache.get(doc_id, 0.0)
 
 
 def load_link_graph(index_dir: str = const.INDEX_DIR_DEFAULT) -> LinkGraph:
