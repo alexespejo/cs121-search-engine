@@ -18,7 +18,7 @@ class SearchEngine:
         query_str: str = input(input_message)
         self.query = Query(query_str)
 
-    def boolean_query(self, top: int) -> list[tuple[int, str, float]]:
+    def boolean_query_tf_idf(self, top: int) -> list[tuple[int, str, float]]:
         """
         Performs a boolean AND query on the inverted index.
         Returns documents containing ALL query terms, ranked by TF-IDF score.
@@ -88,7 +88,7 @@ class SearchEngine:
         Returns:
             List of (doc_id, url, tfidf_score) tuples.
         """
-        results = self.boolean_query(top)
+        results = self.boolean_query_tf_idf(top)
         # match type:
         #     case QueryType.boolean:
         #     case _:

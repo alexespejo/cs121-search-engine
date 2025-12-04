@@ -253,7 +253,7 @@ class InvertedIndex:
             ),
         }
 
-    def display(self, file_name: str = None) -> None:
+    def display(self, file_name: str | None = None) -> None:
         lines = [
             "",
             "=" * 70,
