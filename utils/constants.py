@@ -68,7 +68,7 @@ POSTING_COUNT_FMT = "<I"
 POSTING_COUNT_SIZE = calcsize(POSTING_COUNT_FMT)
 
 # posting itself
-POSTING_FMT = "<If" # @TODO MAY CHANGE
+POSTING_FMT = "<II" # @TODO MAY CHANGE
 POSTING_SIZE = calcsize(POSTING_FMT)
 
 # length of the doc_id to url dict 

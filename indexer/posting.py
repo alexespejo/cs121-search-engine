@@ -26,4 +26,3 @@ class Posting:
 
     def __lt__(self, other: "Posting"):
         return self.doc_id < other.doc_id
-

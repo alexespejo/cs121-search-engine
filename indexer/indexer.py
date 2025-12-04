@@ -93,6 +93,7 @@ class Indexer:
         self._process_files_in_batches(self.batch_size)
         self._merge_indexes()
         rm_dir(self.tmp_indexes_path)
+
         logger.info("Indexer done")
 
     def delete_index(self) -> None:
@@ -151,8 +152,9 @@ class Indexer:
 
         tokens = []
         zone_tokens = tokenize_fields(fields)
-        for _, tok_list in zone_tokens:
-            tokens.extend(tok_list)
+        for _, tok_list in zone_tokens.items():
+            if tok_list and isinstance(tok_list[0], str):
+                tokens.extend(tok_list)
 
         fp = simhash(tokens)
         dup_id = self._is_dupe(fp)
@@ -174,7 +176,6 @@ class Indexer:
             self.inv_index.add_posting(term, posting)
 
         self.doc_fingerprints[doc_id] = fp
-
 
     def _is_file_skippable(self, url: str) -> tuple[bool, str]:
         """
@@ -343,8 +344,11 @@ class Indexer:
             final_index = load_index_full(f)
 
         final_index_file = self.index_path / f"main_{const.INDEX_FILENAME}.nidx"
-        final_index.save(final_index_file)
+        term_offsets = final_index.save(final_index_file)
         logger.info(f"Merged index saved to {final_index_file}")
+        with open("term_offsets.dat", "w") as f:
+            for term, offset in term_offsets.items():
+                f.write(f"{term} {offset}\n")
 
     def display_report(self, report_output_file: str | None = None) -> None:
         """
