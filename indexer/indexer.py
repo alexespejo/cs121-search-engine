@@ -2,7 +2,6 @@ import utils.constants as const
 from utils.text_processing import extract_fields_html, tokenize_fields, calculate_postings
 from utils.file_io import FilePointer, is_valid_dir, is_valid_file, get_dir_size, rm_dir, save_file_list, load_file_list, get_json_file_list
 from indexer.inverted_index import InvertedIndex, load_index_full
-from indexer.posting import Posting
 from indexer.simhash import simhash, hamming
 
 import json
@@ -130,7 +129,7 @@ class Indexer:
         parts = urlparse(abs_url)
         netloc = parts.netloc.lower()
         path = parts.path.rstrip("/")
-        return urlunparse((parts.scheme.lower(), netloc, path, "", "", ""))
+        return urlunparse((parts.scheme.lower(), netloc, path, parts.params, parts.query, ""))
 
     def _index_document(self, url: str, content: str, reuse_doc_id: bool = False) -> None:
         """
@@ -159,7 +158,7 @@ class Indexer:
         fp = simhash(tokens)
         dup_id = self._is_dupe(fp)
         if dup_id is not None:
-            logger.info(f"Skipping {url}: near-duplicate of doc {dup_id}")
+            logger.warning(f"Skipping {url}: near-duplicate of doc {dup_id}")
             return
 
         if reuse_doc_id:
@@ -276,7 +275,7 @@ class Indexer:
         dirty_count = 0
         while self.file_ptr.file_idx < file_list_len:
             logger.info(f"Processing file {self.file_ptr.file_idx} / {file_list_len}...")
-            self._process_file(self.file_list[self.file_ptr.file_idx], reuse_doc_id=False)
+            self._process_file(self.file_list[self.file_ptr.file_idx], reuse_doc_id=True)
             dirty_count += 1
             self.file_ptr.file_idx += 1
 
@@ -346,7 +345,7 @@ class Indexer:
         final_index_file = self.index_path / f"main_{const.INDEX_FILENAME}.nidx"
         term_offsets = final_index.save(final_index_file)
         logger.info(f"Merged index saved to {final_index_file}")
-        with open("term_offsets.dat", "w") as f:
+        with open("index/term_offsets.dat", "w") as f:
             for term, offset in term_offsets.items():
                 f.write(f"{term} {offset}\n")
 

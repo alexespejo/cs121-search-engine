@@ -21,11 +21,17 @@ tmux send-keys -t "$SESSION_NAME" "source .venv/bin/activate" C-m
 if [[ "$1" == "-i" ]]; then
     shift
     tmux send-keys -t "$SESSION_NAME" "python3 run_indexer.py -l warn > examples/results/indexer.result 2> examples/errors/indexer.err" C-m
+    echo "Running Indexer..."
+fi
+
+if [[ "$1" == "-p" ]]; then
+    shift
+    tmux send-keys -t "$SESSION_NAME" "python3 run_pagerank.py -l info > examples/results/pagerank.result 2> examples/errors/pagerank.err" C-m
+    echo "Running PageRank..."
 fi
 
 for testfile in "$@"; do
     test=$(basename $testfile .txt)
     tmux send-keys -t "$SESSION_NAME" "python3 run_search_engine.py < tests/$test.txt > examples/results/$test.result 2> examples/errors/$test.err" C-m
+    echo "Running test-$test"
 done
-
-echo "Tests Started"

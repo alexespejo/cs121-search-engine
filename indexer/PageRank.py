@@ -71,7 +71,6 @@ class LinkGraph:
         graph.nodes = data['nodes']
         return graph
 
-
 class PageRank:
     """
     Computes PageRank scores for documents in the corpus.
@@ -458,7 +457,6 @@ class PageRank:
             print(f"{i:3}. [{score:.6f}] {url}")
         
         print("=" * 70)
-
 
 def load_pagerank(index_dir: str = const.INDEX_DIR_DEFAULT) -> dict[int, float]:
     """

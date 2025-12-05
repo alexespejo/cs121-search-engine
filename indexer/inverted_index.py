@@ -223,6 +223,7 @@ class InvertedIndex:
                 postings: list[Posting] = self.index_dict[term]
                 f.write(struct.pack(const.POSTING_COUNT_FMT, len(postings)))
                 for posting in postings:
+                    posting.weighted_tf = posting.get_weighted_tf()
                     f.write(struct.pack(const.POSTING_FMT, 
                                         posting.doc_id, 
                                         posting.weighted_tf

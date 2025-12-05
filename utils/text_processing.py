@@ -6,6 +6,9 @@ import nltk
 from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer
 from warnings import filterwarnings
+import re
+
+stemmer = PorterStemmer()
 
 filterwarnings("ignore", category=bs4.MarkupResemblesLocatorWarning)
 nltk.download("punkt")
@@ -29,9 +32,11 @@ def calculate_postings(doc_id: int, zone_tokens: dict[str, list[str]]) -> dict[s
 
     return postings
 
+def tokenize_url(url: str) -> set[str]:
+    tokens = re.split(r'[^a-z0-9]+', url.lower())
+    return {stemmer.stem(t, to_lowercase=True) for t in tokens if t and t not in const.STOP_WORDS}
 
 def tokenize_fields(fields: dict) -> dict[str, list[str]]:
-    stemmer = PorterStemmer()
 
     def tokenize_list(text_list):
         joined = " ".join(text_list).lower()
