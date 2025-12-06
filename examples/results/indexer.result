@@ -1,0 +1,20 @@
+Starting indexing...
+Indexing complete
+indexing time: 0:44:51250339820.0
+
+======================================================================
+INDEX ANALYTICS REPORT
+======================================================================
+
+Metric                                   | Value
+----------------------------------------------------------------------
+Number of indexed documents              | 29572
+Number of unique tokens                  | 153207
+Total postings                           | 3136698
+Average postings per token               | 20.47
+Median postings per token                | 1
+Max postings per token                   | 16714
+Min postings per token                   | 1
+Total size of index on disk KB | MB | GB | 107047.06 | 104.54 | 0.10
+
+======================================================================

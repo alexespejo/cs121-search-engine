@@ -1,3 +1,4 @@
+from indexer.posting import Posting
 from search.query import Query, QueryType
 import utils.constants as const
 from indexer.inverted_index import get_postings, get_document_count, load_doc_id_to_url
@@ -22,7 +23,7 @@ class Score:
     def total_score(self):
         total_score: float = 0.0
         for key, score in self.scores.items():
-            total_score += score * const.SCORING_DICT[key]
+            total_score += score * const.SCORING_WEIGHTS[key]
         return total_score
 
 class SearchEngine:
@@ -52,7 +53,7 @@ class SearchEngine:
         # -----------------------------
         # Load postings for each term
         t0 = time.time()
-        term_postings = {}
+        term_postings: dict[str, list[Posting]] = {}
         for term in self.query.parsed_query:
             postings = get_postings(self.index_fptr, term)
             if not postings:
@@ -95,6 +96,7 @@ class SearchEngine:
                 postings = term_postings[term]
                 idx = bisect.bisect_left(postings, doc_id)
                 if idx < len(postings) and postings[idx].doc_id == doc_id:
+                    postings[idx].weighted_tf = postings[idx].get_weighted_tf()
                     tf = postings[idx].weighted_tf
                     doc_scores[doc_id].scores["tf-idf"] += tf * term_idf[term]
         t1 = time.time()

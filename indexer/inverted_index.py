@@ -79,9 +79,15 @@ def get_postings(f: BufferedReader, term: str) -> list[Posting]:
         postings = []
         p_len = struct.unpack_from(const.POSTING_COUNT_FMT, f.read(const.POSTING_COUNT_SIZE))[0]
         for _ in range(p_len):
-            doc_id, weighted_tf = struct.unpack_from(const.POSTING_FMT,f.read(const.POSTING_SIZE))
+            doc_id, body, title, h1, h2, h3, bold, anchor = struct.unpack_from(const.POSTING_FMT,f.read(const.POSTING_SIZE))
             p = Posting(doc_id)
-            p.weighted_tf = weighted_tf
+            p.counts["body"] = body
+            p.counts["title"] = title
+            p.counts["h1"] = h1
+            p.counts["h2"] = h2
+            p.counts["h3"] = h3
+            p.counts["bold"] = bold
+            p.counts["anchor"] = anchor
             postings.append(p)
         f.seek(0)
         return postings
@@ -165,9 +171,15 @@ def load_index_full(f: BufferedReader) -> "InvertedIndex":
             p_len = struct.unpack_from(const.POSTING_COUNT_FMT, f.read(const.POSTING_COUNT_SIZE))[0]
             postings = []
             for _ in range(p_len):
-                doc_id, weighted_tf = struct.unpack_from(const.POSTING_FMT, f.read(const.POSTING_SIZE))
+                doc_id, body, title, h1, h2, h3, bold, anchor = struct.unpack_from(const.POSTING_FMT,f.read(const.POSTING_SIZE))
                 p = Posting(doc_id)
-                p.weighted_tf = weighted_tf
+                p.counts["body"] = body
+                p.counts["title"] = title
+                p.counts["h1"] = h1
+                p.counts["h2"] = h2
+                p.counts["h3"] = h3
+                p.counts["bold"] = bold
+                p.counts["anchor"] = anchor
                 postings.append(p)
 
             index.index_dict[term].extend(postings)
@@ -223,10 +235,15 @@ class InvertedIndex:
                 postings: list[Posting] = self.index_dict[term]
                 f.write(struct.pack(const.POSTING_COUNT_FMT, len(postings)))
                 for posting in postings:
-                    posting.weighted_tf = posting.get_weighted_tf()
                     f.write(struct.pack(const.POSTING_FMT, 
                                         posting.doc_id, 
-                                        posting.weighted_tf
+                                        posting.counts["body"],
+                                        posting.counts["title"],
+                                        posting.counts["h1"],
+                                        posting.counts["h2"],
+                                        posting.counts["h3"],
+                                        posting.counts["bold"],
+                                        posting.counts["anchor"],
                                         )
                     )
             

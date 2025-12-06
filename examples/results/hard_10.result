@@ -1,0 +1,119 @@
+Enter Query: 
+======================================================================
+Search Results for query: "Monte Carlo Tree Search MCTS Checkers Python"
+======================================================================
+There were no results for query: "Monte Carlo Tree Search MCTS Checkers Python"
+======================================================================
+
+search time: 3.24ms
+Enter Query: 
+======================================================================
+Search Results for query: "mmap memoryview"
+======================================================================
+There were no results for query: "mmap memoryview"
+======================================================================
+
+search time: 0.88ms
+Enter Query: 
+======================================================================
+Search Results for query: "B+ tree duplicate pages"
+======================================================================
+There were no results for query: "B+ tree duplicate pages"
+======================================================================
+
+search time: 0.01ms
+Enter Query: [Timing] Loaded postings: 5.2927 ms
+[Timing] Intersected doc IDs: 0.1354 ms
+[Timing] Computed IDF: 0.0348 ms
+[Timing] Computed TF-IDF & pagerank: 0.0558 ms
+[Timing] Normalized scores: 0.0079 ms
+[Timing] Sorted docs: 0.0122 ms
+[Timing] Built final results: 0.0029 ms
+[Timing] Total boolean_query time: 5.5671 ms
+
+======================================================================
+Search Results for query: "matrix chain multiplication memoization"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~eppstein/161/glossary.html 0.0000     0.0000     0.0000    
+======================================================================
+
+search time: 5.81ms
+Enter Query: [Timing] Loaded postings: 4.3085 ms
+[Timing] Intersected doc IDs: 0.1016 ms
+
+======================================================================
+Search Results for query: "mmap multiple dictionaries serialization"
+======================================================================
+There were no results for query: "mmap multiple dictionaries serialization"
+======================================================================
+
+search time: 4.61ms
+Enter Query: [Timing] Loaded postings: 7.3528 ms
+[Timing] Intersected doc IDs: 0.2759 ms
+[Timing] Computed IDF: 0.0291 ms
+[Timing] Computed TF-IDF & pagerank: 0.0646 ms
+[Timing] Normalized scores: 0.0081 ms
+[Timing] Sorted docs: 0.0105 ms
+[Timing] Built final results: 0.0031 ms
+[Timing] Total boolean_query time: 7.7672 ms
+
+======================================================================
+Search Results for query: "distributed query Jaccard similarity"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   http://flamingo.ics.uci.edu/releases/2.0.1         6.0000     1.0000     0.0000    
+2   http://flamingo.ics.uci.edu/releases/1.0           0.0000     0.0000     0.0000    
+======================================================================
+
+search time: 8.28ms
+Enter Query: 
+======================================================================
+Search Results for query: "OpenSSH ed25519 key authentication Windows"
+======================================================================
+There were no results for query: "OpenSSH ed25519 key authentication Windows"
+======================================================================
+
+search time: 0.59ms
+Enter Query: 
+======================================================================
+Search Results for query: "kwalletd6 restart Arch"
+======================================================================
+There were no results for query: "kwalletd6 restart Arch"
+======================================================================
+
+search time: 1.60ms
+Enter Query: [Timing] Loaded postings: 10.2584 ms
+[Timing] Intersected doc IDs: 0.5126 ms
+[Timing] Computed IDF: 0.0284 ms
+[Timing] Computed TF-IDF & pagerank: 0.4315 ms
+[Timing] Normalized scores: 0.0188 ms
+[Timing] Sorted docs: 0.0203 ms
+[Timing] Built final results: 0.0045 ms
+[Timing] Total boolean_query time: 11.2982 ms
+
+======================================================================
+Search Results for query: "vector space model ranking"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   http://archive.ics.uci.edu/ml/datasets/Ionosphere  6.0000     1.0000     0.0000    
+2   https://www.ics.uci.edu/~eppstein/bibs/eppstein.html 3.5472     0.3412     1.0000    
+3   https://grape.ics.uci.edu/wiki/public/wiki/cs221-2019-spring-project4?version=11 1.8093     0.3015     0.0000    
+4   https://ngs.ics.uci.edu/list-of-publications       1.2701     0.2111     0.0025    
+5   https://grape.ics.uci.edu/wiki/public/wiki/cs221-2019-spring?action=diff&version=94 1.2659     0.2110     0.0000    
+======================================================================
+
+search time: 12.01ms
+Enter Query: 
+======================================================================
+Search Results for query: "Restlet Jakarta EE Tomcat"
+======================================================================
+There were no results for query: "Restlet Jakarta EE Tomcat"
+======================================================================
+
+search time: 3.03ms
+Enter Query: 
+EOF found, exiting...

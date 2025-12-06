@@ -1,0 +1,347 @@
+Enter Query: [Timing] Loaded postings: 7.1716 ms
+[Timing] Intersected doc IDs: 0.2673 ms
+[Timing] Computed IDF: 0.0350 ms
+[Timing] Computed TF-IDF & pagerank: 2.4028 ms
+[Timing] Normalized scores: 0.1137 ms
+[Timing] Sorted docs: 0.1211 ms
+[Timing] Built final results: 0.0062 ms
+[Timing] Total boolean_query time: 10.1571 ms
+
+======================================================================
+Search Results for query: "artificial neural networks"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~emj/Mjolsness_CV_V67p.htm 6.0104     1.0000     0.0069    
+2   https://cbcl.ics.uci.edu/doku.php/publications?rev=1516475524 5.5476     0.9238     0.0033    
+3   https://www.ics.uci.edu/~ihler/pubs00.html         4.3323     0.7212     0.0033    
+4   https://www.ics.uci.edu/~dechter/publications      3.9930     0.6642     0.0052    
+5   http://archive.ics.uci.edu/ml/support/Breast+Cancer+Wisconsin+(Diagnostic) 3.5543     0.5916     0.0033    
+======================================================================
+
+search time: 10.64ms
+Enter Query: [Timing] Loaded postings: 9.5639 ms
+[Timing] Intersected doc IDs: 0.3414 ms
+[Timing] Computed IDF: 0.0303 ms
+[Timing] Computed TF-IDF & pagerank: 1.9851 ms
+[Timing] Normalized scores: 0.0849 ms
+[Timing] Sorted docs: 0.0806 ms
+[Timing] Built final results: 0.0045 ms
+[Timing] Total boolean_query time: 12.1181 ms
+
+======================================================================
+Search Results for query: "big data analytics"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   http://asterix.ics.uci.edu//publications.html      6.0834     1.0000     0.0556    
+2   https://www.ics.uci.edu/~dsm/publications.html     5.9610     0.9900     0.0138    
+3   https://www.ics.uci.edu/~mjcarey/MJCarey_Publications.html 5.4147     0.8894     0.0520    
+4   http://asterix.ics.uci.edu//thesis.html            4.6690     0.7643     0.0556    
+5   https://www.ics.uci.edu/~mjcarey/MJCarey_Invited_Lectures.html 2.9924     0.4857     0.0520    
+======================================================================
+
+search time: 12.85ms
+Enter Query: [Timing] Loaded postings: 8.0559 ms
+[Timing] Intersected doc IDs: 0.2656 ms
+[Timing] Computed IDF: 0.0262 ms
+[Timing] Computed TF-IDF & pagerank: 0.0308 ms
+[Timing] Normalized scores: 0.0041 ms
+[Timing] Sorted docs: 0.0060 ms
+[Timing] Built final results: 0.0019 ms
+[Timing] Total boolean_query time: 8.4121 ms
+
+======================================================================
+Search Results for query: "climate change mitigation"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   http://riscit.ics.uci.edu                          0.0000     0.0000     0.0000    
+======================================================================
+
+search time: 9.01ms
+Enter Query: [Timing] Loaded postings: 4.9562 ms
+[Timing] Intersected doc IDs: 0.1888 ms
+[Timing] Computed IDF: 0.0241 ms
+[Timing] Computed TF-IDF & pagerank: 0.0505 ms
+[Timing] Normalized scores: 0.0055 ms
+[Timing] Sorted docs: 0.0074 ms
+[Timing] Built final results: 0.0019 ms
+[Timing] Total boolean_query time: 5.2540 ms
+
+======================================================================
+Search Results for query: "quantum mechanics experiments"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~irani/f18-quantum/index.html 6.0000     1.0000     0.0000    
+2   https://duttgroup.ics.uci.edu/publications         1.5000     0.0000     1.0000    
+======================================================================
+
+search time: 5.59ms
+Enter Query: [Timing] Loaded postings: 9.4318 ms
+[Timing] Intersected doc IDs: 0.5476 ms
+[Timing] Computed IDF: 0.0274 ms
+[Timing] Computed TF-IDF & pagerank: 8.6629 ms
+[Timing] Normalized scores: 0.3536 ms
+[Timing] Sorted docs: 0.3777 ms
+[Timing] Built final results: 0.0050 ms
+[Timing] Total boolean_query time: 19.4304 ms
+
+======================================================================
+Search Results for query: "graph theory algorithms"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~eppstein/pubs/2013.html   6.0073     1.0000     0.0049    
+2   https://www.ics.uci.edu/~eppstein/bibs/eppstein.html 5.1789     0.7974     0.2631    
+3   https://www.ics.uci.edu/~goodrich/pubs             4.2424     0.6803     0.1071    
+4   https://www.ics.uci.edu/~eppstein/pubs/c-soda.html 4.1041     0.6827     0.0053    
+5   https://www.ics.uci.edu/~goodrich                  3.8521     0.3920     1.0000    
+======================================================================
+
+search time: 20.29ms
+Enter Query: [Timing] Loaded postings: 30.6818 ms
+[Timing] Intersected doc IDs: 1.2155 ms
+[Timing] Computed IDF: 0.0410 ms
+[Timing] Computed TF-IDF & pagerank: 1.7292 ms
+[Timing] Normalized scores: 0.0968 ms
+[Timing] Sorted docs: 0.0849 ms
+[Timing] Built final results: 0.0052 ms
+[Timing] Total boolean_query time: 33.8919 ms
+
+======================================================================
+Search Results for query: "cryptography and security"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~gts/pubs.html             6.0117     1.0000     0.0078    
+2   https://www.ics.uci.edu/~goodrich                  3.3779     0.3130     1.0000    
+3   https://duttgroup.ics.uci.edu/publications         3.3259     0.5339     0.0819    
+4   http://sprout.ics.uci.edu/projects/usec/usec.html  3.1506     0.5230     0.0083    
+5   https://www.ics.uci.edu/~goodrich/pubs             2.9335     0.4604     0.1141    
+======================================================================
+
+search time: 37.10ms
+Enter Query: 
+======================================================================
+Search Results for query: "human-computer interaction research"
+======================================================================
+There were no results for query: "human-computer interaction research"
+======================================================================
+
+search time: 0.02ms
+Enter Query: [Timing] Loaded postings: 5.4424 ms
+[Timing] Intersected doc IDs: 0.2105 ms
+[Timing] Computed IDF: 0.0286 ms
+[Timing] Computed TF-IDF & pagerank: 0.4685 ms
+[Timing] Normalized scores: 0.0253 ms
+[Timing] Sorted docs: 0.0291 ms
+[Timing] Built final results: 0.0048 ms
+[Timing] Total boolean_query time: 6.2306 ms
+
+======================================================================
+Search Results for query: "bioinformatics sequence analysis"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://cbcl.ics.uci.edu/doku.php/publications?rev=1516475524 6.0000     1.0000     0.0000    
+2   https://cbcl.ics.uci.edu/doku.php/publications?rev=1534400717 2.5857     0.4310     0.0000    
+3   https://www.ics.uci.edu/~xhx                       2.1252     0.1042     1.0000    
+4   https://www.ics.uci.edu/~mguindan/publications.html 2.0474     0.3283     0.0518    
+5   http://archive.ics.uci.edu/ml/datasets/Molecular+Biology+%28Promoter+Gene+Sequences%29 1.4532     0.2422     0.0000    
+======================================================================
+
+search time: 6.57ms
+Enter Query: [Timing] Loaded postings: 6.2385 ms
+[Timing] Intersected doc IDs: 0.2964 ms
+[Timing] Computed IDF: 0.0565 ms
+[Timing] Computed TF-IDF & pagerank: 1.4777 ms
+[Timing] Normalized scores: 0.0675 ms
+[Timing] Sorted docs: 0.0713 ms
+[Timing] Built final results: 0.0045 ms
+[Timing] Total boolean_query time: 8.2343 ms
+
+======================================================================
+Search Results for query: "natural language understanding"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~dan/class/267P/datasets/calgary/bib 6.0059     1.0000     0.0039    
+2   https://www.ics.uci.edu/~neno/vita/vita.html       2.7263     0.4535     0.0033    
+3   https://www.ics.uci.edu/~harris/publications.html  2.6500     0.4361     0.0222    
+4   https://www.ics.uci.edu/~alspaugh/cls/shr/logicConcepts.html 2.1066     0.3460     0.0204    
+5   http://sdcl.ics.uci.edu/papers                     2.0982     0.3203     0.1177    
+======================================================================
+
+search time: 8.74ms
+Enter Query: [Timing] Loaded postings: 13.4969 ms
+[Timing] Intersected doc IDs: 0.8261 ms
+[Timing] Computed IDF: 0.0389 ms
+[Timing] Computed TF-IDF & pagerank: 1.7087 ms
+[Timing] Normalized scores: 0.0756 ms
+[Timing] Sorted docs: 0.0765 ms
+[Timing] Built final results: 0.0048 ms
+[Timing] Total boolean_query time: 16.2554 ms
+
+======================================================================
+Search Results for query: "parallel computing frameworks"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~schark                    6.0312     1.0000     0.0208    
+2   https://www.ics.uci.edu/~goodrich/pubs             4.9694     0.7523     0.3036    
+3   https://www.ics.uci.edu/~dillenco/pubs             4.7982     0.7149     0.3393    
+4   https://www.ics.uci.edu/~bic/messengers            3.7944     0.6217     0.0427    
+5   https://www.ics.uci.edu/~dsm/publications.html     3.4870     0.5720     0.0367    
+======================================================================
+
+search time: 17.47ms
+Enter Query: 
+======================================================================
+Search Results for query: "exoplanet discovery telescope"
+======================================================================
+There were no results for query: "exoplanet discovery telescope"
+======================================================================
+
+search time: 2.15ms
+Enter Query: [Timing] Loaded postings: 1.5280 ms
+[Timing] Intersected doc IDs: 0.0129 ms
+[Timing] Computed IDF: 0.0238 ms
+[Timing] Computed TF-IDF & pagerank: 0.0267 ms
+[Timing] Normalized scores: 0.0043 ms
+[Timing] Sorted docs: 0.0050 ms
+[Timing] Built final results: 0.0017 ms
+[Timing] Total boolean_query time: 1.6193 ms
+
+======================================================================
+Search Results for query: "ancient Egyptian hieroglyphs"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~eppstein/numth/egypt/intro.html 0.0000     0.0000     0.0000    
+======================================================================
+
+search time: 1.65ms
+Enter Query: [Timing] Loaded postings: 6.8417 ms
+[Timing] Intersected doc IDs: 0.2942 ms
+[Timing] Computed IDF: 0.0241 ms
+[Timing] Computed TF-IDF & pagerank: 0.5307 ms
+[Timing] Normalized scores: 0.0265 ms
+[Timing] Sorted docs: 0.0260 ms
+[Timing] Built final results: 0.0048 ms
+[Timing] Total boolean_query time: 7.7682 ms
+
+======================================================================
+Search Results for query: "machine translation evaluation"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~pazzani/Publications/OldPublications.html 6.4264     0.9087     0.6496    
+2   https://www.ics.uci.edu/~rickl/courses/cs-171/2014-wq-cs171/CS-171-WQ-2014.htm 6.0207     1.0000     0.0138    
+3   http://archive.ics.uci.edu/ml/datasets/Wine        4.8239     0.8038     0.0007    
+4   https://www.ics.uci.edu/~rickl/courses/cs-271/2013-wq-cs271/CS-271-WQ-2013.htm 3.9730     0.6572     0.0200    
+5   https://www.ics.uci.edu/~alspaugh/pubs.html        3.5582     0.5804     0.0503    
+======================================================================
+
+search time: 8.30ms
+Enter Query: [Timing] Loaded postings: 7.1237 ms
+[Timing] Intersected doc IDs: 0.2773 ms
+[Timing] Computed IDF: 0.0243 ms
+[Timing] Computed TF-IDF & pagerank: 1.4834 ms
+[Timing] Normalized scores: 0.0718 ms
+[Timing] Sorted docs: 0.0665 ms
+[Timing] Built final results: 0.0038 ms
+[Timing] Total boolean_query time: 9.0730 ms
+
+======================================================================
+Search Results for query: "statistical regression models"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~jutts                     6.3020     1.0000     0.2014    
+2   https://www.ics.uci.edu/~eppstein/280/bib.html     2.7064     0.4376     0.0537    
+3   https://www.ics.uci.edu/~jutts/201-F13             2.5541     0.4165     0.0366    
+4   https://www.ics.uci.edu/~mguindan/publications.html 2.4070     0.3877     0.0539    
+5   https://www.ics.uci.edu/~pazzani/Publications/OldPublications.html 2.2206     0.1201     1.0000    
+======================================================================
+
+search time: 9.62ms
+Enter Query: [Timing] Loaded postings: 6.2582 ms
+[Timing] Intersected doc IDs: 0.2089 ms
+[Timing] Computed IDF: 0.0246 ms
+[Timing] Computed TF-IDF & pagerank: 0.4368 ms
+[Timing] Normalized scores: 0.0234 ms
+[Timing] Sorted docs: 0.0238 ms
+[Timing] Built final results: 0.0043 ms
+[Timing] Total boolean_query time: 7.0009 ms
+
+======================================================================
+Search Results for query: "deep reinforcement learning"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~dechter/courses/ics-295/fall-2019 6.3121     1.0000     0.2081    
+2   https://www.ics.uci.edu/~dechter/courses/ics-295/winter-2018 4.5944     0.7121     0.2144    
+3   https://cbcl.ics.uci.edu/doku.php/publications?rev=1516475524 3.7643     0.5754     0.2081    
+4   https://www.ics.uci.edu/~xhx/courses/CS273P        1.9261     0.0900     0.9239    
+5   http://iasl.ics.uci.edu/people/levorato            1.9200     0.0700     1.0000    
+======================================================================
+
+search time: 7.44ms
+Enter Query: [Timing] Loaded postings: 11.2348 ms
+[Timing] Intersected doc IDs: 0.4771 ms
+[Timing] Computed IDF: 0.0296 ms
+[Timing] Computed TF-IDF & pagerank: 3.6664 ms
+[Timing] Normalized scores: 0.1478 ms
+[Timing] Sorted docs: 0.1504 ms
+[Timing] Built final results: 0.0041 ms
+[Timing] Total boolean_query time: 15.7330 ms
+
+======================================================================
+Search Results for query: "data visualization techniques"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~mjcarey/MJCarey_Publications.html 6.0332     1.0000     0.0222    
+2   https://www.ics.uci.edu/~wscacchi/Papers/New/FOSSRRI-Scacchi-Gasser.html 5.8592     0.9757     0.0033    
+3   http://archive.ics.uci.edu/ml/support/Glass+Identification 5.5043     0.9166     0.0033    
+4   https://www.ics.uci.edu/~goodrich/pubs             4.8762     0.8006     0.0486    
+5   http://archive.ics.uci.edu/ml/datasets/Wine        4.6192     0.7690     0.0035    
+======================================================================
+
+search time: 16.64ms
+Enter Query: 
+======================================================================
+Search Results for query: "random gibberish qwertyuiopasdf"
+======================================================================
+There were no results for query: "random gibberish qwertyuiopasdf"
+======================================================================
+
+search time: 2.16ms
+Enter Query: 
+======================================================================
+Search Results for query: "unicode characters π λ θ 𒀀"
+======================================================================
+There were no results for query: "unicode characters π λ θ 𒀀"
+======================================================================
+
+search time: 0.01ms
+Enter Query: 
+======================================================================
+Search Results for query: "long concatenated technical terms neuralnetworkoptimizationalgorithm"
+======================================================================
+There were no results for query: "long concatenated technical terms neuralnetworkoptimizationalgorithm"
+======================================================================
+
+search time: 21.31ms
+Enter Query: 
+======================================================================
+Search Results for query: "nonexistent term xyz123abc456"
+======================================================================
+There were no results for query: "nonexistent term xyz123abc456"
+======================================================================
+
+search time: 3.58ms
+Enter Query: 
+EOF found, exiting...

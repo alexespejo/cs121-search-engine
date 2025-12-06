@@ -1,0 +1,222 @@
+Enter Query: [Timing] Loaded postings: 9.1388 ms
+[Timing] Intersected doc IDs: 0.4325 ms
+[Timing] Computed IDF: 0.0358 ms
+[Timing] Computed TF-IDF & pagerank: 17.3120 ms
+[Timing] Normalized scores: 1.1640 ms
+[Timing] Sorted docs: 1.2772 ms
+[Timing] Built final results: 0.0072 ms
+[Timing] Total boolean_query time: 29.4096 ms
+
+======================================================================
+Search Results for query: "machine learning"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/faculty/index.php          6.0085     1.0000     0.0056    
+2   https://www.cs.uci.edu/faculty                     3.5219     0.5680     0.0760    
+3   https://www.ics.uci.edu/faculty/faculty_dept?department=Computer%20Science 3.4097     0.5680     0.0012    
+4   https://www.ics.uci.edu/~pazzani/Publications/OldPublications.html 1.9915     0.3199     0.0479    
+5   https://www.ics.uci.edu                            1.6110     0.0185     1.0000    
+======================================================================
+
+search time: 30.45ms
+Enter Query: [Timing] Loaded postings: 11.5819 ms
+[Timing] Intersected doc IDs: 0.5224 ms
+[Timing] Computed IDF: 0.0310 ms
+[Timing] Computed TF-IDF & pagerank: 0.3119 ms
+[Timing] Normalized scores: 0.0174 ms
+[Timing] Sorted docs: 0.0196 ms
+[Timing] Built final results: 0.0048 ms
+[Timing] Total boolean_query time: 12.5146 ms
+
+======================================================================
+Search Results for query: "climate change policy"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/community/news/spotlight/spotlight_mori.php 6.0002     1.0000     0.0001    
+2   https://www.ics.uci.edu/community/news/spotlight/spotlight_mykletun.php 6.0002     1.0000     0.0001    
+3   https://www.ics.uci.edu/community/news/view_news?id=1631 2.1005     0.3501     0.0000    
+4   https://www.ics.uci.edu/community/news/view_news.php?id=1445 1.9198     0.3200     0.0000    
+5   https://www.ics.uci.edu/about/equity               1.8729     0.0622     1.0000    
+======================================================================
+
+search time: 13.44ms
+Enter Query: [Timing] Loaded postings: 1.7641 ms
+[Timing] Intersected doc IDs: 0.0439 ms
+[Timing] Computed IDF: 0.0219 ms
+[Timing] Computed TF-IDF & pagerank: 0.3204 ms
+[Timing] Normalized scores: 0.0246 ms
+[Timing] Sorted docs: 0.0250 ms
+[Timing] Built final results: 0.0045 ms
+[Timing] Total boolean_query time: 2.2254 ms
+
+======================================================================
+Search Results for query: "economic growth"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://ngs.ics.uci.edu/visiting-nagpur            6.7536     1.0000     0.5024    
+2   https://ngs.ics.uci.edu/internet-growth-in-china   5.1062     0.7250     0.5042    
+3   https://www.ics.uci.edu/~ics1c/hw4/05.html         4.8399     0.6791     0.5103    
+4   https://www.ics.uci.edu/community/news/view_news.php?id=1429 4.3093     0.6014     0.4672    
+5   https://www.ics.uci.edu/~wscacchi/Papers/New/FOSSRRI-Scacchi-Gasser.html 2.5051     0.3007     0.4672    
+======================================================================
+
+search time: 2.34ms
+Enter Query: [Timing] Loaded postings: 4.3771 ms
+[Timing] Intersected doc IDs: 0.1321 ms
+[Timing] Computed IDF: 0.0231 ms
+[Timing] Computed TF-IDF & pagerank: 0.2036 ms
+[Timing] Normalized scores: 0.0114 ms
+[Timing] Sorted docs: 0.0122 ms
+[Timing] Built final results: 0.0041 ms
+[Timing] Total boolean_query time: 4.7832 ms
+
+======================================================================
+Search Results for query: "artificial intelligence ethics"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~dechter/courses/ics-295/fall-2019 6.0000     1.0000     0.0000    
+2   https://www.informatics.uci.edu/undergrad/courses  1.5700     0.0117     1.0000    
+3   https://www.cs.uci.edu/aiuci-exploring-the-world-of-artificial-intelligence 0.5802     0.0961     0.0023    
+4   https://www.ics.uci.edu/~klefstad/vita.html        0.5140     0.0634     0.0890    
+5   https://www.cs.uci.edu/pierre-baldis-transformative-ai-leadership 0.3436     0.0568     0.0018    
+======================================================================
+
+search time: 5.06ms
+Enter Query: [Timing] Loaded postings: 19.4466 ms
+[Timing] Intersected doc IDs: 1.2236 ms
+[Timing] Computed IDF: 0.0370 ms
+[Timing] Computed TF-IDF & pagerank: 6.4104 ms
+[Timing] Normalized scores: 0.2828 ms
+[Timing] Sorted docs: 0.2851 ms
+[Timing] Built final results: 0.0050 ms
+[Timing] Total boolean_query time: 27.7233 ms
+
+======================================================================
+Search Results for query: "computer graphics algorithms"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~eppstein/bibs/eppstein.html 6.2232     1.0000     0.1488    
+2   https://www.ics.uci.edu/~goodrich/pubs             4.6226     0.7546     0.0631    
+3   https://www.ics.uci.edu/~dechter/talks.html        3.5074     0.5262     0.2334    
+4   https://www.ics.uci.edu/~dan/class/267P/datasets/calgary/bib 2.6021     0.4324     0.0051    
+5   https://www.ics.uci.edu/~bic/messengers            2.0589     0.3409     0.0089    
+======================================================================
+
+search time: 29.70ms
+Enter Query: [Timing] Loaded postings: 7.9782 ms
+[Timing] Intersected doc IDs: 0.3891 ms
+[Timing] Computed IDF: 0.0279 ms
+[Timing] Computed TF-IDF & pagerank: 1.9343 ms
+[Timing] Normalized scores: 0.0865 ms
+[Timing] Sorted docs: 0.0885 ms
+[Timing] Built final results: 0.0045 ms
+[Timing] Total boolean_query time: 10.5319 ms
+
+======================================================================
+Search Results for query: "parallel processing techniques"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~wscacchi/Papers/Software_Process_Redesign/Paper-Draft.html 6.0065     1.0000     0.0043    
+2   https://www.ics.uci.edu/~schark                    5.3690     0.8938     0.0043    
+3   https://www.ics.uci.edu/~goodrich/pubs             3.1583     0.5106     0.0631    
+4   https://www.ics.uci.edu/~dillenco/pubs             2.9995     0.4823     0.0706    
+5   https://www.ics.uci.edu/~bic/messengers            2.5560     0.4238     0.0089    
+======================================================================
+
+search time: 11.17ms
+Enter Query: [Timing] Loaded postings: 8.6730 ms
+[Timing] Intersected doc IDs: 0.3750 ms
+[Timing] Computed IDF: 0.0248 ms
+[Timing] Computed TF-IDF & pagerank: 0.3488 ms
+[Timing] Normalized scores: 0.0181 ms
+[Timing] Sorted docs: 0.0193 ms
+[Timing] Built final results: 0.0041 ms
+[Timing] Total boolean_query time: 9.4857 ms
+
+======================================================================
+Search Results for query: "world war history"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~dan/genealogy/Miller/desc-aam.htm 6.7357     0.9565     0.6645    
+2   https://www.ics.uci.edu/~ics1c/hw4/18.html         6.0072     1.0000     0.0048    
+3   https://www.ics.uci.edu/~ics1c/hw4/01.html         4.2891     0.7136     0.0048    
+4   https://www.ics.uci.edu/~kay/courses/131/s04readings.html 2.7992     0.4665     0.0000    
+5   https://www.ics.uci.edu/~dan/genealogy/Miller/naftali.htm 2.7224     0.2037     1.0000    
+======================================================================
+
+search time: 10.13ms
+Enter Query: [Timing] Loaded postings: 5.6534 ms
+[Timing] Intersected doc IDs: 0.2272 ms
+[Timing] Computed IDF: 0.0234 ms
+[Timing] Computed TF-IDF & pagerank: 0.5248 ms
+[Timing] Normalized scores: 0.0272 ms
+[Timing] Sorted docs: 0.0293 ms
+[Timing] Built final results: 0.0043 ms
+[Timing] Total boolean_query time: 6.5105 ms
+
+======================================================================
+Search Results for query: "protein structure prediction"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~rickl/rickl-publications  6.0277     1.0000     0.0185    
+2   https://www.ics.uci.edu/~pjsadows/research.html    3.8995     0.3999     1.0000    
+3   https://cbcl.ics.uci.edu/doku.php/publications?rev=1516475524 3.5993     0.5999     0.0000    
+4   http://archive.ics.uci.edu/ml/datasets/Yeast       2.9552     0.4925     0.0000    
+5   http://archive.ics.uci.edu/ml/datasets/Ecoli       1.9642     0.3274     0.0000    
+======================================================================
+
+search time: 6.87ms
+Enter Query: [Timing] Loaded postings: 9.5782 ms
+[Timing] Intersected doc IDs: 0.4277 ms
+[Timing] Computed IDF: 0.0262 ms
+[Timing] Computed TF-IDF & pagerank: 1.9755 ms
+[Timing] Normalized scores: 0.0854 ms
+[Timing] Sorted docs: 0.0901 ms
+[Timing] Built final results: 0.0041 ms
+[Timing] Total boolean_query time: 12.2101 ms
+
+======================================================================
+Search Results for query: "search engine optimization"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~andre/publications.html   6.0951     1.0000     0.0634    
+2   https://www.ics.uci.edu/~dechter/talks.html        4.5295     0.7100     0.1795    
+3   https://www.ics.uci.edu/~goodrich/pubs             2.6504     0.4296     0.0486    
+4   https://www.ics.uci.edu/~eppstein/bibs/eppstein.html 2.4763     0.3841     0.1144    
+5   https://ngs.ics.uci.edu/research/patents           1.5278     0.0046     1.0000    
+======================================================================
+
+search time: 12.98ms
+Enter Query: [Timing] Loaded postings: 10.5824 ms
+[Timing] Intersected doc IDs: 0.4249 ms
+[Timing] Computed IDF: 0.0277 ms
+[Timing] Computed TF-IDF & pagerank: 1.6983 ms
+[Timing] Normalized scores: 0.0744 ms
+[Timing] Sorted docs: 0.0741 ms
+[Timing] Built final results: 0.0038 ms
+[Timing] Total boolean_query time: 12.9087 ms
+
+======================================================================
+Search Results for query: "deep learning applications"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~welling/publications/publications.html 6.0192     1.0000     0.0128    
+2   https://cbcl.ics.uci.edu/doku.php/publications?rev=1516475524 5.2625     0.8739     0.0128    
+3   https://www.ics.uci.edu/~dechter/courses/ics-295/fall-2019 4.2170     0.6996     0.0128    
+4   https://www.ics.uci.edu/~skong2                    4.1524     0.6427     0.1977    
+5   https://www.ics.uci.edu/~xhx                       3.1459     0.4464     0.3115    
+======================================================================
+
+search time: 13.78ms
+Enter Query: 
+EOF found, exiting...

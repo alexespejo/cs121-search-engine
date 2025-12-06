@@ -22,7 +22,7 @@ class Posting:
     def get_weighted_tf(self):
         if self.weighted_tf != 0:
             return self.weighted_tf
-        return sum(self.counts[k] * const.WEIGHTS.get(k, 1.0) for k in self.counts)
+        return sum(self.counts[k] * const.TAG_WEIGHTS.get(k, 1.0) for k in self.counts)
 
     def __lt__(self, other):
         if isinstance(other, (int, float)):

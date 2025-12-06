@@ -1,0 +1,90 @@
+Enter Query: [Timing] Loaded postings: 1.4949 ms
+[Timing] Intersected doc IDs: 0.0272 ms
+[Timing] Computed IDF: 0.0312 ms
+[Timing] Computed TF-IDF & pagerank: 0.5527 ms
+[Timing] Normalized scores: 0.0470 ms
+[Timing] Sorted docs: 0.0508 ms
+[Timing] Built final results: 0.0060 ms
+[Timing] Total boolean_query time: 2.2430 ms
+
+======================================================================
+Search Results for query: "cristina lopes"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~hsajnani                  6.0239     1.0000     0.0160    
+2   https://www.ics.uci.edu/faculty/area/index.php     5.5146     0.8154     0.4149    
+3   https://www.informatics.uci.edu/explore/faculty-profiles/cristina-lopes 2.8927     0.4726     0.0382    
+4   https://www.informatics.uci.edu/very-top-footer-menu-items/people 2.7910     0.2161     0.9963    
+5   https://www.informatics.uci.edu/impact/community-engagement 2.5068     0.1692     0.9943    
+======================================================================
+
+search time: 2.33ms
+Enter Query: [Timing] Loaded postings: 9.5809 ms
+[Timing] Intersected doc IDs: 0.4323 ms
+[Timing] Computed IDF: 0.0327 ms
+[Timing] Computed TF-IDF & pagerank: 17.2040 ms
+[Timing] Normalized scores: 0.9518 ms
+[Timing] Sorted docs: 1.1971 ms
+[Timing] Built final results: 0.0050 ms
+[Timing] Total boolean_query time: 29.4349 ms
+
+======================================================================
+Search Results for query: "machine learning"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/faculty/index.php          6.0085     1.0000     0.0056    
+2   https://www.cs.uci.edu/faculty                     3.5219     0.5680     0.0760    
+3   https://www.ics.uci.edu/faculty/faculty_dept?department=Computer%20Science 3.4097     0.5680     0.0012    
+4   https://www.ics.uci.edu/~pazzani/Publications/OldPublications.html 1.9915     0.3199     0.0479    
+5   https://www.ics.uci.edu                            1.6110     0.0185     1.0000    
+======================================================================
+
+search time: 30.37ms
+Enter Query: [Timing] Loaded postings: 1.9674 ms
+[Timing] Intersected doc IDs: 0.0803 ms
+[Timing] Computed IDF: 0.0231 ms
+[Timing] Computed TF-IDF & pagerank: 7.3137 ms
+[Timing] Normalized scores: 0.8292 ms
+[Timing] Sorted docs: 0.9484 ms
+[Timing] Built final results: 0.0048 ms
+[Timing] Total boolean_query time: 11.1880 ms
+
+======================================================================
+Search Results for query: "ACM"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~gmark/Home_page/Publications.html 6.0060     1.0000     0.0040    
+2   https://www.ics.uci.edu/~kobsa/kobsa-publi.htm     5.9925     0.9973     0.0056    
+3   https://www.ics.uci.edu/~eppstein/bibs/eppstein.html 3.8118     0.6074     0.1115    
+4   https://www.ics.uci.edu/~eppstein/pubs/geom-tri.html 2.8531     0.4721     0.0135    
+5   https://www.ics.uci.edu/~goodrich                  2.6911     0.3448     0.4147    
+======================================================================
+
+search time: 11.50ms
+Enter Query: [Timing] Loaded postings: 41.7290 ms
+[Timing] Intersected doc IDs: 1.8773 ms
+[Timing] Computed IDF: 0.0427 ms
+[Timing] Computed TF-IDF & pagerank: 3.4609 ms
+[Timing] Normalized scores: 0.1116 ms
+[Timing] Sorted docs: 0.1266 ms
+[Timing] Built final results: 0.0052 ms
+[Timing] Total boolean_query time: 47.3924 ms
+
+======================================================================
+Search Results for query: "master of software engineering"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~taylor                    6.5239     0.8561     0.9249    
+2   https://www.ics.uci.edu/~neno/vita/vita.html       6.0000     1.0000     0.0000    
+3   https://mswe.ics.uci.edu/program/curriculum        3.5332     0.5811     0.0312    
+4   https://www.ics.uci.edu/grad/admissions/Prospective_ApplicationProcess.php 3.5209     0.3368     1.0000    
+5   https://www.informatics.uci.edu/grad/overview      3.4496     0.5118     0.2526    
+======================================================================
+
+search time: 51.36ms
+Enter Query: 
+EOF found, exiting...

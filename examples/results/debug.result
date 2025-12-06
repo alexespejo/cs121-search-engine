@@ -1,0 +1,274 @@
+Enter Query: 
+======================================================================
+Search Results for query: "qwertyuiop"
+======================================================================
+There were no results for query: "qwertyuiop"
+======================================================================
+
+search time: 0.72ms
+Enter Query: 
+======================================================================
+Search Results for query: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+======================================================================
+There were no results for query: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+======================================================================
+
+search time: 0.96ms
+Enter Query: 
+======================================================================
+Search Results for query: "computational philogy"
+======================================================================
+There were no results for query: "computational philogy"
+======================================================================
+
+search time: 27.58ms
+Enter Query: [Timing] Loaded postings: 87.2288 ms
+[Timing] Intersected doc IDs: 3.9837 ms
+
+======================================================================
+Search Results for query: "New York Times square root of a potato"
+======================================================================
+There were no results for query: "New York Times square root of a potato"
+======================================================================
+
+search time: 99.87ms
+Enter Query: 
+======================================================================
+Search Results for query: "unicode π δ λ 漢字 हिन्दी"
+======================================================================
+There were no results for query: "unicode π δ λ 漢字 हिन्दी"
+======================================================================
+
+search time: 0.02ms
+Enter Query: [Timing] Loaded postings: 6.9785 ms
+[Timing] Intersected doc IDs: 0.2503 ms
+[Timing] Computed IDF: 0.0393 ms
+[Timing] Computed TF-IDF & pagerank: 0.0699 ms
+[Timing] Normalized scores: 0.0098 ms
+[Timing] Sorted docs: 0.0141 ms
+[Timing] Built final results: 0.0038 ms
+[Timing] Total boolean_query time: 7.3934 ms
+
+======================================================================
+Search Results for query: "neural network convergence proof"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~emj/Mjolsness_CV_V67p.htm 0.0000     0.0000     0.0000    
+======================================================================
+
+search time: 7.92ms
+Enter Query: [Timing] Loaded postings: 29.0294 ms
+[Timing] Intersected doc IDs: 1.8582 ms
+[Timing] Computed IDF: 0.0570 ms
+[Timing] Computed TF-IDF & pagerank: 159.8940 ms
+[Timing] Normalized scores: 15.9304 ms
+[Timing] Sorted docs: 20.0796 ms
+[Timing] Built final results: 0.0145 ms
+[Timing] Total boolean_query time: 226.9616 ms
+
+======================================================================
+Search Results for query: "the"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~kobsa/privacy/Denmark.htm 6.0012     1.0000     0.0008    
+2   https://www.ics.uci.edu/~pattis/ICS-21/lectures/statements/lecture.html 4.7522     0.7917     0.0014    
+3   https://www.ics.uci.edu/~pattis/common/handouts/introtopythonineclipse/lecture.html 4.6895     0.7812     0.0014    
+4   https://www.ics.uci.edu/~thornton/ics46/ProjectGuide/Project0 3.5498     0.5912     0.0019    
+5   https://www.ics.uci.edu/~pattis/ICS-31/announcements.html 3.4033     0.5668     0.0015    
+======================================================================
+
+search time: 234.19ms
+Enter Query: [Timing] Loaded postings: 12.0645 ms
+[Timing] Intersected doc IDs: 0.7060 ms
+[Timing] Computed IDF: 0.0393 ms
+[Timing] Computed TF-IDF & pagerank: 61.3730 ms
+[Timing] Normalized scores: 6.7420 ms
+[Timing] Sorted docs: 7.5827 ms
+[Timing] Built final results: 0.0093 ms
+[Timing] Total boolean_query time: 88.5713 ms
+
+======================================================================
+Search Results for query: "computer computer computer computer computer"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~eppstein/bibs/eppstein.html 6.0604     1.0000     0.0403    
+2   https://www.ics.uci.edu/~dillenco/pubs             5.2446     0.8693     0.0191    
+3   https://www.ics.uci.edu/~kay/courses/previous.html 4.9456     0.8185     0.0230    
+4   https://www.ics.uci.edu/~dan/class/267P/datasets/calgary/bib 4.6627     0.7768     0.0014    
+5   https://www.ics.uci.edu/~wscacchi                  4.3912     0.7169     0.0600    
+======================================================================
+
+search time: 91.78ms
+Enter Query: [Timing] Loaded postings: 4.1294 ms
+[Timing] Intersected doc IDs: 0.1700 ms
+
+======================================================================
+Search Results for query: "statistical physics banana"
+======================================================================
+There were no results for query: "statistical physics banana"
+======================================================================
+
+search time: 4.89ms
+Enter Query: 
+======================================================================
+Search Results for query: "genome sequencing CRISPR Cas9"
+======================================================================
+There were no results for query: "genome sequencing CRISPR Cas9"
+======================================================================
+
+search time: 2.78ms
+Enter Query: 
+======================================================================
+Search Results for query: "ancient Greek philosophy metaphysics"
+======================================================================
+There were no results for query: "ancient Greek philosophy metaphysics"
+======================================================================
+
+search time: 0.44ms
+Enter Query: 
+======================================================================
+Search Results for query: "random non-existent term xyz123"
+======================================================================
+There were no results for query: "random non-existent term xyz123"
+======================================================================
+
+search time: 0.01ms
+Enter Query: 
+======================================================================
+Search Results for query: "supercalifragilisticexpialidocious"
+======================================================================
+There were no results for query: "supercalifragilisticexpialidocious"
+======================================================================
+
+search time: 0.50ms
+Enter Query: 
+======================================================================
+Search Results for query: "fictitious chemical compound xyzium"
+======================================================================
+There were no results for query: "fictitious chemical compound xyzium"
+======================================================================
+
+search time: 1.47ms
+Enter Query: 
+======================================================================
+Search Results for query: "verylongquerywithoutspacesandmeaning"
+======================================================================
+There were no results for query: "verylongquerywithoutspacesandmeaning"
+======================================================================
+
+search time: 0.44ms
+Enter Query: [Timing] Loaded postings: 7.2966 ms
+[Timing] Intersected doc IDs: 0.3228 ms
+
+======================================================================
+Search Results for query: "extremely rare historical events"
+======================================================================
+There were no results for query: "extremely rare historical events"
+======================================================================
+
+search time: 8.13ms
+Enter Query: 
+======================================================================
+Search Results for query: "mis-typed search engine input"
+======================================================================
+There were no results for query: "mis-typed search engine input"
+======================================================================
+
+search time: 0.01ms
+Enter Query: 
+======================================================================
+Search Results for query: "long string of numbers 12345678901234567890"
+======================================================================
+There were no results for query: "long string of numbers 12345678901234567890"
+======================================================================
+
+search time: 40.53ms
+Enter Query: [Timing] Loaded postings: 5.7216 ms
+[Timing] Intersected doc IDs: 0.1643 ms
+[Timing] Computed IDF: 0.0317 ms
+[Timing] Computed TF-IDF & pagerank: 0.0496 ms
+[Timing] Normalized scores: 0.0055 ms
+[Timing] Sorted docs: 0.0093 ms
+[Timing] Built final results: 0.0021 ms
+[Timing] Total boolean_query time: 6.0072 ms
+
+======================================================================
+Search Results for query: "concatenated keywords without separators"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~kay/courses/31/string-formatting.html 0.0000     0.0000     0.0000    
+======================================================================
+
+search time: 6.33ms
+Enter Query: [Timing] Loaded postings: 1.7350 ms
+[Timing] Intersected doc IDs: 0.0193 ms
+
+======================================================================
+Search Results for query: "obscure linguistic terminology"
+======================================================================
+There were no results for query: "obscure linguistic terminology"
+======================================================================
+
+search time: 1.79ms
+Enter Query: 
+======================================================================
+Search Results for query: "complex multi-word nonsense query"
+======================================================================
+There were no results for query: "complex multi-word nonsense query"
+======================================================================
+
+search time: 0.01ms
+Enter Query: [Timing] Loaded postings: 9.0511 ms
+[Timing] Intersected doc IDs: 0.3798 ms
+[Timing] Computed IDF: 0.0265 ms
+[Timing] Computed TF-IDF & pagerank: 0.2017 ms
+[Timing] Normalized scores: 0.0114 ms
+[Timing] Sorted docs: 0.0155 ms
+[Timing] Built final results: 0.0069 ms
+[Timing] Total boolean_query time: 9.7141 ms
+
+======================================================================
+Search Results for query: "rare programming language syntax"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~pattis/ICS-21/lectures/statements/lecture.html 6.7043     1.0000     0.4695    
+2   https://www.ics.uci.edu/~thornton/ics32a/Notes/FileSystems 2.9784     0.3335     0.6517    
+3   https://www.ics.uci.edu/~thornton/inf43/FinalStudyGuide.html 2.6076     0.1846     1.0000    
+4   https://www.ics.uci.edu/~kay/courses/i42/hw/hw5.html 1.3451     0.2135     0.0427    
+5   https://www.ics.uci.edu/~thornton/ics32/Notes/Classes 1.3187     0.0575     0.6493    
+======================================================================
+
+search time: 10.43ms
+Enter Query: 
+======================================================================
+Search Results for query: "alien language symbols 𒀀𒁀𒂀"
+======================================================================
+There were no results for query: "alien language symbols 𒀀𒁀𒂀"
+======================================================================
+
+search time: 0.01ms
+Enter Query: 
+======================================================================
+Search Results for query: "random unicode characters 🌀✨🚀"
+======================================================================
+There were no results for query: "random unicode characters 🌀✨🚀"
+======================================================================
+
+search time: 0.01ms
+Enter Query: [Timing] Loaded postings: 5.7747 ms
+[Timing] Intersected doc IDs: 0.1609 ms
+
+======================================================================
+Search Results for query: "unlikely phrase combination blue elephant piano"
+======================================================================
+There were no results for query: "unlikely phrase combination blue elephant piano"
+======================================================================
+
+search time: 6.22ms
+Enter Query: 
+EOF found, exiting...

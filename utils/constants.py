@@ -2,14 +2,24 @@ from logging import DEBUG, INFO, WARNING, ERROR
 from struct import calcsize
 
 # ======================================== CONFIG ========================================
-BATCH_SIZE_DEFAULT = 15_000
-TOP_RESULTS_DEFAULT = 5
-SCORING_DICT = {
-    "tf-idf" : 10,       # weighting of TF-IDF scoring method
-    "pagerank" : 2,     # weighting of PageRank scoring method
-    "url" : 1           # weighting of the query terms all being in the URL
+SCORING_WEIGHTS = {
+    "tf-idf" : 6.0,       # weighting of TF-IDF scoring method
+    "pagerank" : 1.5,     # weighting of PageRank scoring method
+    "url" : 1.0           # weighting of the query terms all being in the URL
+}
+TAG_WEIGHTS = {
+    "body": 1.0,
+    "title": 5.5,
+    "h1": 4.0,
+    "h2": 2.5,
+    "h3": 1.75,
+    "bold": 1.25,
+    "anchor": 4.5
 }
 HAMMING_THRESHOLD = 5
+
+BATCH_SIZE_DEFAULT = 15_000
+TOP_RESULTS_DEFAULT = 5
 ZONES = {
     "body_tokens":   "body",
     "title_tokens":  "title",
@@ -18,15 +28,6 @@ ZONES = {
     "h3_tokens":     "h3",
     "bold_tokens":   "bold",
     "anchor_tokens": "anchor"
-}
-WEIGHTS = {
-    "body": 1.0,
-    "title": 4.0,
-    "h1": 3.0,
-    "h2": 2.0,
-    "h3": 1.5,
-    "bold": 1.5,
-    "anchor": 5.0
 }
 STOP_WORDS = {
     "a", "about", "above", "after", "again", "against", "all", "am", "an",
@@ -96,7 +97,7 @@ POSTING_COUNT_FMT = "<I"
 POSTING_COUNT_SIZE = calcsize(POSTING_COUNT_FMT)
 
 # posting itself
-POSTING_FMT = "<If" # @TODO MAY CHANGE
+POSTING_FMT = "<IIIIIIII" # @TODO MAY CHANGE
 POSTING_SIZE = calcsize(POSTING_FMT)
 
 # length of the doc_id to url dict 

@@ -1,0 +1,391 @@
+Enter Query: [Timing] Loaded postings: 7.2968 ms
+[Timing] Intersected doc IDs: 0.2942 ms
+[Timing] Computed IDF: 0.0439 ms
+[Timing] Computed TF-IDF & pagerank: 0.3653 ms
+[Timing] Normalized scores: 0.0236 ms
+[Timing] Sorted docs: 0.0253 ms
+[Timing] Built final results: 0.0062 ms
+[Timing] Total boolean_query time: 8.0893 ms
+
+======================================================================
+Search Results for query: "Python unit testing"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~thornton/ics45c/Notes/UnitTesting 6.1501     1.0000     0.1001    
+2   https://www.ics.uci.edu/~thornton/inf43/FinalStudyGuide.html 5.0210     0.8119     0.0996    
+3   https://www.ics.uci.edu/~thornton/ics33/CodeExamples/UnitTesting/CodeExamples.html 3.2678     0.5446     0.0000    
+4   https://www.ics.uci.edu/~thornton/ics33/CodeExamples 2.7272     0.2589     0.7827    
+5   https://www.ics.uci.edu/~thornton/ics46/ProjectGuide/Project0 2.1447     0.3360     0.0856    
+======================================================================
+
+search time: 8.50ms
+Enter Query: [Timing] Loaded postings: 10.8604 ms
+[Timing] Intersected doc IDs: 0.6135 ms
+[Timing] Computed IDF: 0.0374 ms
+[Timing] Computed TF-IDF & pagerank: 0.1547 ms
+[Timing] Normalized scores: 0.0088 ms
+[Timing] Sorted docs: 0.0100 ms
+[Timing] Built final results: 0.0038 ms
+[Timing] Total boolean_query time: 11.7197 ms
+
+======================================================================
+Search Results for query: "SEO search engine optimization"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://cbcl.ics.uci.edu/doku.php/publications?rev=1516475524 6.0000     1.0000     0.0000    
+2   https://www.ics.uci.edu/~aces/conferences.htm      1.5000     0.0000     1.0000    
+3   https://cbcl.ics.uci.edu/doku.php/publications?rev=1534400717 0.9585     0.1598     0.0000    
+4   https://grape.ics.uci.edu/wiki/public/wiki/cs221-2019-spring?action=diff&version=110 0.2873     0.0479     0.0000    
+======================================================================
+
+search time: 12.59ms
+Enter Query: [Timing] Loaded postings: 9.8372 ms
+[Timing] Intersected doc IDs: 0.5622 ms
+[Timing] Computed IDF: 0.0269 ms
+[Timing] Computed TF-IDF & pagerank: 2.7003 ms
+[Timing] Normalized scores: 0.0992 ms
+[Timing] Sorted docs: 0.1078 ms
+[Timing] Built final results: 0.0041 ms
+[Timing] Total boolean_query time: 13.3655 ms
+
+======================================================================
+Search Results for query: "machine learning deep learning"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~welling/publications/publications.html 6.0018     1.0000     0.0012    
+2   https://www.ics.uci.edu/~pjsadows/research.html    4.1502     0.6897     0.0078    
+3   https://cbcl.ics.uci.edu/doku.php/publications?rev=1516475524 4.0273     0.6709     0.0012    
+4   https://www.ics.uci.edu/~skong2                    3.3117     0.5474     0.0180    
+5   https://www.ics.uci.edu/~dechter/courses/ics-295/fall-2019 3.2786     0.5461     0.0012    
+======================================================================
+
+search time: 14.12ms
+Enter Query: [Timing] Loaded postings: 7.6575 ms
+[Timing] Intersected doc IDs: 0.2317 ms
+[Timing] Computed IDF: 0.0265 ms
+[Timing] Computed TF-IDF & pagerank: 0.1276 ms
+[Timing] Normalized scores: 0.0093 ms
+[Timing] Sorted docs: 0.0107 ms
+[Timing] Built final results: 0.0043 ms
+[Timing] Total boolean_query time: 8.0917 ms
+
+======================================================================
+Search Results for query: "JavaScript IDE development"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://grape.ics.uci.edu/wiki/public/wiki/cs122b-2019-winter-project4?version=5&format=txt 6.0000     1.0000     0.0000    
+2   https://grape.ics.uci.edu/wiki/public/wiki/cs122b-2019-winter-project1?version=34&format=txt 3.3380     0.5563     0.0000    
+3   https://grape.ics.uci.edu/wiki/public/wiki/cs122b-2019-winter-project2?action=diff&version=1 2.8005     0.4667     0.0000    
+4   https://grape.ics.uci.edu/wiki/public/wiki/cs122b-2017-winter-project4?version=10&format=txt 2.5809     0.4301     0.0000    
+5   https://www.ics.uci.edu/~kay/courses/i42/refs.html 1.9316     0.0719     1.0000    
+======================================================================
+
+search time: 8.56ms
+Enter Query: 
+======================================================================
+Search Results for query: "Kubernetes cluster setup"
+======================================================================
+There were no results for query: "Kubernetes cluster setup"
+======================================================================
+
+search time: 0.62ms
+Enter Query: 
+======================================================================
+Search Results for query: "Rust C++"
+======================================================================
+There were no results for query: "Rust C++"
+======================================================================
+
+search time: 0.01ms
+Enter Query: [Timing] Loaded postings: 10.6692 ms
+[Timing] Intersected doc IDs: 0.4964 ms
+[Timing] Computed IDF: 0.0331 ms
+[Timing] Computed TF-IDF & pagerank: 0.3874 ms
+[Timing] Normalized scores: 0.0174 ms
+[Timing] Sorted docs: 0.0191 ms
+[Timing] Built final results: 0.0050 ms
+[Timing] Total boolean_query time: 11.6632 ms
+
+======================================================================
+Search Results for query: "binary search tree Java"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~dillenco/compsci261p      7.5000     1.0000     1.0000    
+2   https://www.ics.uci.edu/~goodrich/pubs             6.3765     0.8408     0.8878    
+3   https://www.ics.uci.edu/~kibler/ICS23/syllabus.html 2.2657     0.3776     0.0000    
+4   https://www.ics.uci.edu/~alspaugh/cls/shr/javadoc.html 2.1069     0.2671     0.3360    
+5   https://www.ics.uci.edu/~thornton/ics22/Schedule.html 1.4812     0.0171     0.9193    
+======================================================================
+
+search time: 12.41ms
+Enter Query: [Timing] Loaded postings: 8.0171 ms
+[Timing] Intersected doc IDs: 0.2427 ms
+[Timing] Computed IDF: 0.0238 ms
+[Timing] Computed TF-IDF & pagerank: 0.1893 ms
+[Timing] Normalized scores: 0.0100 ms
+[Timing] Sorted docs: 0.0117 ms
+[Timing] Built final results: 0.0041 ms
+[Timing] Total boolean_query time: 8.5201 ms
+
+======================================================================
+Search Results for query: "SQL query optimization large"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://chenli.ics.uci.edu/publications            6.0000     1.0000     0.0000    
+2   https://www.ics.uci.edu/~mjcarey/MJCarey_Publications.html 5.8753     0.9220     0.2288    
+3   https://grape.ics.uci.edu/wiki/public/wiki/cs122b-2018-spring-project3?version=11 3.9551     0.6592     0.0000    
+4   https://isg.ics.uci.edu/courses                    1.9142     0.1300     0.7560    
+5   https://grape.ics.uci.edu/wiki/public/wiki/cs222-2018-fall-project4?action=diff&version=1 1.6455     0.2743     0.0000    
+======================================================================
+
+search time: 8.96ms
+Enter Query: [Timing] Loaded postings: 11.2698 ms
+[Timing] Intersected doc IDs: 0.4277 ms
+[Timing] Computed IDF: 0.0257 ms
+[Timing] Computed TF-IDF & pagerank: 0.9058 ms
+[Timing] Normalized scores: 0.0429 ms
+[Timing] Sorted docs: 0.0429 ms
+[Timing] Built final results: 0.0041 ms
+[Timing] Total boolean_query time: 12.7416 ms
+
+======================================================================
+Search Results for query: "remote work productivity"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://redmiles.ics.uci.edu/publication           6.1031     1.0000     0.0687    
+2   https://www.ics.uci.edu/~thornton/ics46/ProjectGuide/Project0 5.4286     0.8981     0.0267    
+3   https://www.ics.uci.edu/~ejw/whitehead_cv.html     4.9407     0.8209     0.0101    
+4   https://www.informatics.uci.edu/undergrad/courses  3.3837     0.3140     1.0000    
+5   https://www.ics.uci.edu/~etrainer                  2.6009     0.4240     0.0379    
+======================================================================
+
+search time: 13.66ms
+Enter Query: 
+======================================================================
+Search Results for query: "Express.js API secure"
+======================================================================
+There were no results for query: "Express.js API secure"
+======================================================================
+
+search time: 0.01ms
+Enter Query: [Timing] Loaded postings: 19.2761 ms
+[Timing] Intersected doc IDs: 1.0204 ms
+[Timing] Computed IDF: 0.0358 ms
+[Timing] Computed TF-IDF & pagerank: 0.4900 ms
+[Timing] Normalized scores: 0.0207 ms
+[Timing] Sorted docs: 0.0236 ms
+[Timing] Built final results: 0.0043 ms
+[Timing] Total boolean_query time: 20.8991 ms
+
+======================================================================
+Search Results for query: "Python data science libraries"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~ejw/authoring/implementation.html 6.0042     1.0000     0.0028    
+2   https://www.ics.uci.edu/~thornton/ics32/Notes/CourseIntroduction 4.9414     0.8220     0.0061    
+3   http://sli.ics.uci.edu/Classes/2016W-178           3.9758     0.6583     0.0175    
+4   https://grape.ics.uci.edu/wiki/asterix/wiki/stats170ab-2018?version=67 3.7805     0.6301     0.0000    
+5   http://sli.ics.uci.edu/Classes/2015F-179           3.6064     0.5967     0.0175    
+======================================================================
+
+search time: 22.29ms
+Enter Query: [Timing] Loaded postings: 9.0241 ms
+[Timing] Intersected doc IDs: 0.3903 ms
+
+======================================================================
+Search Results for query: "CSS responsive design Grid"
+======================================================================
+There were no results for query: "CSS responsive design Grid"
+======================================================================
+
+search time: 9.95ms
+Enter Query: 
+======================================================================
+Search Results for query: "JWT OAuth2"
+======================================================================
+There were no results for query: "JWT OAuth2"
+======================================================================
+
+search time: 0.65ms
+Enter Query: [Timing] Loaded postings: 4.4224 ms
+[Timing] Intersected doc IDs: 0.0882 ms
+
+======================================================================
+Search Results for query: "Python Monte Carlo simulation"
+======================================================================
+There were no results for query: "Python Monte Carlo simulation"
+======================================================================
+
+search time: 4.66ms
+Enter Query: [Timing] Loaded postings: 4.5569 ms
+[Timing] Intersected doc IDs: 0.1738 ms
+[Timing] Computed IDF: 0.0319 ms
+[Timing] Computed TF-IDF & pagerank: 0.3109 ms
+[Timing] Normalized scores: 0.0176 ms
+[Timing] Sorted docs: 0.0234 ms
+[Timing] Built final results: 0.0045 ms
+[Timing] Total boolean_query time: 5.1429 ms
+
+======================================================================
+Search Results for query: "Linux server monitoring"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://grape.ics.uci.edu/wiki/asterix/raw-attachment/wiki/cs122a-2019-spring/Homework5Dump.sql 6.0238     1.0000     0.0159    
+2   https://www.ics.uci.edu/~thornton/ics184/LabManual/InstallingAndUsingMySQL.html 4.2935     0.6942     0.0857    
+3   https://www.ics.uci.edu/~thornton/ics46/ProjectGuide/Project0 3.6154     0.5808     0.0871    
+4   https://www.ics.uci.edu/~aburtsev/238P/2018fall/hw/xv6-setup.html 2.6910     0.4373     0.0447    
+5   https://grape.ics.uci.edu/wiki/public/wiki/cs122b-2019-winter-project1-logging 1.6976     0.0329     1.0000    
+======================================================================
+
+search time: 5.45ms
+Enter Query: [Timing] Loaded postings: 11.4675 ms
+[Timing] Intersected doc IDs: 0.4714 ms
+[Timing] Computed IDF: 0.0319 ms
+[Timing] Computed TF-IDF & pagerank: 0.6146 ms
+[Timing] Normalized scores: 0.0308 ms
+[Timing] Sorted docs: 0.0300 ms
+[Timing] Built final results: 0.0045 ms
+[Timing] Total boolean_query time: 12.6750 ms
+
+======================================================================
+Search Results for query: "distributed systems latency"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~schark                    6.0240     1.0000     0.0160    
+2   https://www.cs.uci.edu/cs-research-areas           3.2488     0.2915     1.0000    
+3   https://www.ics.uci.edu/faculty/area/index.php     3.1788     0.4284     0.4055    
+4   https://www.ics.uci.edu/~givargis                  3.0536     0.4997     0.0369    
+5   https://www.ics.uci.edu/~marios/pubs.html          2.6935     0.4404     0.0342    
+======================================================================
+
+search time: 13.47ms
+Enter Query: [Timing] Loaded postings: 1.6687 ms
+[Timing] Intersected doc IDs: 0.0196 ms
+
+======================================================================
+Search Results for query: "Docker Compose"
+======================================================================
+There were no results for query: "Docker Compose"
+======================================================================
+
+search time: 1.73ms
+Enter Query: [Timing] Loaded postings: 1.8907 ms
+[Timing] Intersected doc IDs: 0.0277 ms
+[Timing] Computed IDF: 0.0274 ms
+[Timing] Computed TF-IDF & pagerank: 0.0591 ms
+[Timing] Normalized scores: 0.0074 ms
+[Timing] Sorted docs: 0.0093 ms
+[Timing] Built final results: 0.0033 ms
+[Timing] Total boolean_query time: 2.0463 ms
+
+======================================================================
+Search Results for query: "Python memoization"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~pattis/ICS-33/weeklyschedule.html 6.0000     1.0000     0.0000    
+2   https://www.ics.uci.edu/~sudderth                  1.5000     0.0000     1.0000    
+3   https://www.ics.uci.edu/~sudderth/projects         0.9887     0.0365     0.5132    
+======================================================================
+
+search time: 2.13ms
+Enter Query: [Timing] Loaded postings: 2.9523 ms
+[Timing] Intersected doc IDs: 0.0460 ms
+
+======================================================================
+Search Results for query: "Django deployment pitfalls"
+======================================================================
+There were no results for query: "Django deployment pitfalls"
+======================================================================
+
+search time: 3.08ms
+Enter Query: [Timing] Loaded postings: 9.4285 ms
+[Timing] Intersected doc IDs: 0.3352 ms
+
+======================================================================
+Search Results for query: "Python mmap large files"
+======================================================================
+There were no results for query: "Python mmap large files"
+======================================================================
+
+search time: 10.42ms
+Enter Query: 
+======================================================================
+Search Results for query: "VSCode web development extensions"
+======================================================================
+There were no results for query: "VSCode web development extensions"
+======================================================================
+
+search time: 13.66ms
+Enter Query: [Timing] Loaded postings: 7.4775 ms
+[Timing] Intersected doc IDs: 0.2611 ms
+[Timing] Computed IDF: 0.0334 ms
+[Timing] Computed TF-IDF & pagerank: 0.3483 ms
+[Timing] Normalized scores: 0.0191 ms
+[Timing] Sorted docs: 0.0215 ms
+[Timing] Built final results: 0.0048 ms
+[Timing] Total boolean_query time: 8.1882 ms
+
+======================================================================
+Search Results for query: "clean code maintainable"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~dan/class/267P/datasets/calgary/progc 6.0592     1.0000     0.0395    
+2   https://www.ics.uci.edu/~thornton/inf43/FinalStudyGuide.html 4.4725     0.6475     0.3917    
+3   https://www.ics.uci.edu/~ardalan/courses/os/pintos/pintos_4.html 4.2273     0.4545     1.0000    
+4   https://www.ics.uci.edu/~thornton/ics22/LabManual/FindMe 2.0795     0.2078     0.5551    
+5   https://chenli.ics.uci.edu/research                1.4965     0.0097     0.9587    
+======================================================================
+
+search time: 8.68ms
+Enter Query: 
+======================================================================
+Search Results for query: "A/B testing website"
+======================================================================
+There were no results for query: "A/B testing website"
+======================================================================
+
+search time: 0.01ms
+Enter Query: 
+======================================================================
+Search Results for query: "Kubernetes resources free"
+======================================================================
+There were no results for query: "Kubernetes resources free"
+======================================================================
+
+search time: 3.87ms
+Enter Query: [Timing] Loaded postings: 4.8649 ms
+[Timing] Intersected doc IDs: 0.1507 ms
+[Timing] Computed IDF: 0.0279 ms
+[Timing] Computed TF-IDF & pagerank: 0.1681 ms
+[Timing] Normalized scores: 0.0119 ms
+[Timing] Sorted docs: 0.0134 ms
+[Timing] Built final results: 0.0045 ms
+[Timing] Total boolean_query time: 5.2660 ms
+
+======================================================================
+Search Results for query: "cosine similarity vectors"
+======================================================================
+#   URL                                                total      TF-IDF     PageRank  
+----------------------------------------------------------------------
+1   https://www.ics.uci.edu/~eppstein/junkyard/hedronometry.html 7.5000     1.0000     1.0000    
+2   http://flamingo.ics.uci.edu/releases/3.0/src/filtertree/example.cc 5.1401     0.8567     0.0000    
+3   http://flamingo.ics.uci.edu/releases/2.0/src/filtertree/example.cc 2.6713     0.4452     0.0000    
+4   https://grape.ics.uci.edu/wiki/public/wiki/cs221-2019-spring-project4?version=2&format=txt 1.3147     0.2191     0.0000    
+5   https://grape.ics.uci.edu/wiki/public/wiki/cs221-2019-spring-project4?version=11 1.3147     0.2191     0.0000    
+======================================================================
+
+search time: 5.59ms
+Enter Query: 
+EOF found, exiting...
