@@ -6,7 +6,14 @@ const API_BASE_URL = "http://localhost:8000";
 
 function App() {
  const [query, setQuery] = useState("");
- const [results, setResults] = useState<string[]>([]);
+ interface SearchResult {
+  url: string;
+  tfidf_score: number;
+  pagerank: number;
+  total_score: number;
+ }
+
+ const [results, setResults] = useState<SearchResult[]>([]);
  const [top, setTop] = useState<number>(5);
  const [loading, setLoading] = useState(false);
  const [error, setError] = useState<string | null>(null);
@@ -48,7 +55,7 @@ function App() {
 
    const data: {
     query: string;
-    results: string[];
+    results: SearchResult[];
     elapsed_ms: number;
     timed_out: boolean;
     message: string;
@@ -112,11 +119,16 @@ function App() {
 
      {results.length > 0 && (
       <ul className="results-list">
-       {results.map((url, index) => (
-        <li key={url + index} className="results-item">
-         <a href={url} target="_blank" rel="noreferrer">
-          {url}
+       {results.map((result, index) => (
+        <li key={result.url + index} className="results-item">
+         <a href={result.url} target="_blank" rel="noreferrer">
+          {result.url}
          </a>
+         <span className="result-scores">
+          Score: {result.total_score.toFixed(4)} (TF-IDF:{" "}
+          {result.tfidf_score.toFixed(4)}, PageRank:{" "}
+          {result.pagerank.toFixed(4)})
+         </span>
         </li>
        ))}
       </ul>
