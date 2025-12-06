@@ -62,11 +62,12 @@ def search(q: str, top: int = const.TOP_RESULTS_DEFAULT) -> Dict[str, Any]:
 
     # Build results with PageRank
     results = []
-    for doc_id, url, tfidf_score in raw_results:
+    for doc_id, url, score in raw_results:
         results.append({
             "url": url,
-            "tfidf_score": tfidf_score,
-            "pagerank": get_page_rank(doc_id)
+            "tfidf_score": score.scores.get("tf-idf", 0.0),
+            "pagerank": score.scores.get("pagerank", 0.0),
+            "total_score": score.total_score
         })
 
     return {
